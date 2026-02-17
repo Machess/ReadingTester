@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pokémon Story Adventure</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--red:#e3350d;--rdk:#9e250a;--yel:#ffcb05;--ydk:#b8900a;--blu:#3d7dca;--bdk:#1a3560;--grn:#4a9e3f;--ppr:#fdf6e0;--ink:#1c1208;--mut:#7a6a4a;--crm:#fef9ed;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;font-family:'Nunito',sans-serif;background:#0d0d1a;overflow:hidden;}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;transition:opacity .45s,transform .45s;z-index:10;}
+.screen.off{opacity:0;pointer-events:none;transform:scale(.97);}
+.pxbtn{font-family:'Press Start 2P',monospace;font-size:11px;padding:14px 26px;border:4px solid #111;border-radius:8px;cursor:pointer;box-shadow:4px 4px 0 #111;transition:transform .08s,box-shadow .08s;line-height:1.5;display:inline-block;white-space:nowrap;}
+.pxbtn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #111;}
+.pxbtn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #111;}
+.pxbtn:disabled{opacity:.35;pointer-events:none;}
+.pb-red{background:var(--red);color:#fff;}
+.pb-blue{background:var(--blu);color:#fff;}
+.pb-grn{background:var(--grn);color:#fff;}
+.pb-yel{background:var(--yel);color:var(--ink);}
+
+/* ── MENU ── */
+#s-menu{flex-direction:column;background:radial-gradient(ellipse 120% 60% at 50% 0%,#1e1040 0%,transparent 60%),radial-gradient(ellipse 100% 80% at 80% 100%,#1a0a28 0%,transparent 50%),#0d0d1a;overflow:hidden;}
+.stars{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.st{position:absolute;border-radius:50%;background:#fff;animation:twk var(--d) ease-in-out infinite var(--dl);}
+@keyframes twk{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.9;transform:scale(1.6)}}
+.menu-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px;padding:16px;}
+.pball{width:88px;height:88px;border-radius:50%;border:6px solid #111;background:linear-gradient(180deg,var(--red) 0%,var(--red) 46.5%,#111 46.5%,#111 53.5%,#fff 53.5%);position:relative;animation:spin 5s linear infinite;box-shadow:0 0 50px rgba(227,53,13,.35);flex-shrink:0;}
+.pball::after{content:'';position:absolute;width:24px;height:24px;background:#fff;border-radius:50%;border:5px solid #111;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 10px rgba(255,255,255,.7);}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mtitle{font-family:'Press Start 2P',monospace;text-align:center;line-height:1.7;animation:flt 3.2s ease-in-out infinite;}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.mtitle .l1{font-size:clamp(11px,3.8vw,22px);color:var(--yel);text-shadow:3px 3px 0 var(--ydk),0 0 40px rgba(255,203,5,.5);display:block;margin-bottom:4px;}
+.mtitle .l2{font-size:clamp(7px,2.2vw,11px);color:rgba(255,255,255,.45);display:block;letter-spacing:2px;}
+.menu-note{font-family:'Press Start 2P',monospace;font-size:clamp(5px,1.4vw,6px);color:rgba(255,255,255,.2);text-align:center;line-height:2.2;}
+
+/* ── FLAG BUTTONS ── */
+.lang-row{display:flex;gap:12px;align-items:center;}
+.flag-btn{width:54px;height:36px;border-radius:7px;border:3px solid rgba(255,255,255,.2);cursor:pointer;overflow:hidden;padding:0;background:none;transition:transform .12s,border-color .15s,box-shadow .15s;box-shadow:2px 2px 0 rgba(0,0,0,.5);flex-shrink:0;}
+.flag-btn:hover{transform:translate(-1px,-2px);box-shadow:3px 4px 0 rgba(0,0,0,.6);}
+.flag-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.3);}
+.flag-btn.active{border-color:var(--yel);box-shadow:0 0 0 2px var(--ydk),3px 3px 0 rgba(0,0,0,.5);}
+.flag-btn svg{width:100%;height:100%;display:block;}
+
+/* ── OAK ── */
+#s-oak{flex-direction:column;background:radial-gradient(ellipse 100% 80% at 20% 100%,#0f2810 0%,transparent 55%),#0a130a;padding:10px;gap:0;overflow-y:auto;align-items:center;justify-content:flex-start;padding-top:max(10px,env(safe-area-inset-top));}
+.oak-wrap{width:100%;max-width:740px;display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:12px;}
+.oak-img{height:clamp(80px,16vh,180px);filter:drop-shadow(0 8px 20px rgba(0,0,0,.7));animation:flt 2.4s ease-in-out infinite;flex-shrink:0;}
+.dbox{width:100%;background:var(--crm);border:4px solid #111;border-radius:12px;padding:14px 16px 13px;box-shadow:4px 4px 0 #111;position:relative;}
+.dbox::before,.dbox::after{content:'';position:absolute;top:-15px;left:40px;width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;}
+.dbox::before{border-bottom:15px solid #111;}
+.dbox::after{top:-9px;left:42px;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:10px solid var(--crm);}
+.oak-lbl{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--bdk);margin-bottom:8px;letter-spacing:1px;}
+.oak-txt{font-size:clamp(12px,3.6vw,16px);font-weight:700;color:var(--ink);line-height:1.6;min-height:40px;}
+.oak-ctrl{margin-top:11px;}
+.inp-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.tinp{flex:1;min-width:120px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;padding:10px 12px;border:4px solid #111;border-radius:8px;background:#fff;color:var(--ink);outline:none;box-shadow:3px 3px 0 #111;-webkit-appearance:none;}
+.tinp:focus{border-color:var(--blu);box-shadow:3px 3px 0 var(--bdk);}
+.crow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.gbtn{font-family:'Press Start 2P',monospace;font-size:9px;padding:11px 18px;border:4px solid #111;border-radius:8px;cursor:pointer;box-shadow:4px 4px 0 #111;transition:transform .08s,box-shadow .08s;flex:1;}
+.gbtn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #111;}
+.gbtn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #111;}
+.gb-boy{background:var(--blu);color:#fff;}
+.gb-girl{background:#e0689a;color:#fff;}
+.pk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;width:100%;}
+.pk-card{display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'Nunito',sans-serif;font-weight:800;font-size:10px;padding:7px 3px;border:3px solid #ddd;border-radius:9px;cursor:pointer;background:#fff;transition:all .12s;box-shadow:2px 2px 0 #ccc;text-align:center;color:var(--ink);}
+.pk-card .em{font-size:18px;}
+.pk-card:active{transform:translate(1px,1px);box-shadow:1px 1px 0 #bbb;}
+.pk-card.sel{border-color:var(--yel);background:#fffbe6;box-shadow:2px 2px 0 var(--ydk);}
+
+/* ── GENERATING ── */
+#s-gen{flex-direction:column;gap:18px;background:radial-gradient(ellipse 100% 100% at 50% 50%,#1a1030 0%,#080810 100%);}
+.gb2{width:72px;height:72px;border-radius:50%;border:5px solid #111;background:linear-gradient(180deg,var(--red) 0%,var(--red) 46.5%,#111 46.5%,#111 53.5%,#fff 53.5%);animation:spin .75s linear infinite;position:relative;box-shadow:0 0 36px rgba(227,53,13,.5);}
+.gb2::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;border:4px solid #111;top:50%;left:50%;transform:translate(-50%,-50%);}
+.gen-ttl{font-family:'Press Start 2P',monospace;font-size:clamp(9px,3vw,14px);color:var(--yel);text-align:center;line-height:1.9;animation:pls 1.4s ease-in-out infinite;}
+.gen-st{font-size:13px;font-weight:700;color:rgba(255,255,255,.55);text-align:center;max-width:300px;line-height:1.6;padding:0 20px;}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ── BOOK ── */
+#s-book{flex-direction:column;background:#1a0e05;padding:8px 8px 6px;gap:8px;align-items:center;justify-content:flex-start;}
+.book-outer{width:100%;max-width:980px;flex:1;min-height:0;display:flex;flex-direction:column;}
+.book-spread{width:100%;flex:1;display:grid;grid-template-columns:1fr 1fr;border-radius:6px;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.85),0 0 0 2px rgba(255,255,255,.04);}
+.book-spread::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:6;background:linear-gradient(to right,rgba(0,0,0,0) 48%,rgba(0,0,0,.6) 50%,rgba(255,255,255,.07) 50.5%,rgba(0,0,0,0) 54%);}
+@keyframes fwdFlip{0%{transform:rotateY(0)}40%{transform:rotateY(-13deg)}100%{transform:rotateY(0)}}
+@keyframes bckFlip{0%{transform:rotateY(0)}40%{transform:rotateY(13deg)}100%{transform:rotateY(0)}}
+.ff{animation:fwdFlip .55s cubic-bezier(.4,0,.2,1);}
+.bf{animation:bckFlip .55s cubic-bezier(.4,0,.2,1);}
+.p-left{position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;min-height:260px;}
+.p-left::after{content:'';position:absolute;right:0;top:0;bottom:0;width:18px;background:linear-gradient(to right,transparent,rgba(0,0,0,.45));z-index:5;pointer-events:none;}
+.bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;}
+.p-canvas{position:absolute;inset:0;pointer-events:none;z-index:3;}
+.trainer-spr{position:absolute;bottom:0;left:8%;width:clamp(48px,11%,105px);image-rendering:pixelated;z-index:4;filter:drop-shadow(2px 0 0 rgba(0,0,0,.5)) drop-shadow(-2px 0 0 rgba(0,0,0,.5));animation:bob1 1.8s ease-in-out infinite;}
+@keyframes bob1{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.poke-spr{position:absolute;bottom:3%;right:6%;width:clamp(55px,15%,130px);image-rendering:pixelated;z-index:4;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));animation:bob2 2.2s ease-in-out infinite;}
+@keyframes bob2{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.p-right{background:var(--ppr);background-image:repeating-linear-gradient(transparent,transparent 28px,rgba(160,120,60,.12) 28px,rgba(160,120,60,.12) 29px);display:flex;flex-direction:column;justify-content:space-between;padding:clamp(12px,2.5vw,30px);position:relative;overflow:hidden;}
+.p-right::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(to right,var(--yel),var(--red),var(--blu));}
+.p-right::after{content:'';position:absolute;left:0;top:0;bottom:0;width:12px;background:linear-gradient(to left,transparent,rgba(0,0,0,.08));pointer-events:none;}
+.pg-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.pg-badge{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--red);letter-spacing:1px;opacity:.85;}
+.lvl-badge{font-family:'Press Start 2P',monospace;font-size:6px;background:var(--blu);color:#fff;padding:3px 6px;border-radius:4px;border:2px solid var(--bdk);}
+.pg-ch{font-family:'Press Start 2P',monospace;font-size:clamp(6px,1.5vw,10px);color:var(--rdk);line-height:1.9;margin-bottom:7px;}
+.pg-rule{height:2px;width:48px;margin-bottom:8px;background:linear-gradient(to right,var(--yel),transparent);}
+.pg-body{font-size:clamp(11px,2.2vw,15px);font-weight:700;color:#241608;line-height:1.9;flex:1;overflow:hidden;}
+.pg-body p{margin-bottom:8px;}
+.pg-body p:first-child::first-letter{font-family:'Press Start 2P',monospace;font-size:2.2em;color:var(--red);float:left;line-height:.7;padding-right:7px;padding-top:7px;}
+.sk{border-radius:4px;margin-bottom:8px;background:linear-gradient(90deg,#e8d9b0 25%,#f5edd0 50%,#e8d9b0 75%);background-size:200% 100%;animation:shim 1.4s infinite;}
+@keyframes shim{to{background-position:-200% 0}}
+.p-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+.foot-num{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--mut);opacity:.7;}
+.book-nav{width:100%;max-width:980px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-shrink:0;}
+.dots{display:flex;gap:6px;align-items:center;}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.25);transition:all .28s;cursor:pointer;}
+.dot.on{background:var(--yel);border-color:var(--ydk);transform:scale(1.35);}
+.cry-btn{font-family:'Press Start 2P',monospace;font-size:7px;padding:7px 10px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);border-radius:6px;color:rgba(255,255,255,.7);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.cry-btn:hover{background:rgba(255,255,255,.2);color:#fff;}
+.end-veil{display:none;position:absolute;inset:0;border-radius:6px;z-index:20;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:20px;}
+.end-veil.show{display:flex;}
+.end-ttl{font-family:'Press Start 2P',monospace;font-size:clamp(10px,3.5vw,18px);color:var(--yel);line-height:1.85;text-shadow:3px 3px 0 var(--ydk);}
+.end-sub{font-size:13px;font-weight:700;color:rgba(255,255,255,.6);max-width:300px;line-height:1.7;}
+.toast{position:fixed;bottom:max(14px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#c0392b;color:#fff;font-family:'Press Start 2P',monospace;font-size:7px;padding:9px 14px;border-radius:7px;border:3px solid #8e1c14;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;line-height:2;text-align:center;max-width:90vw;}
+.toast.show{opacity:1;}
+.swipe-hint{display:none;}
+
+/* ══ MOBILE 375×667 ══ */
+@media(max-width:480px){
+  .menu-in{gap:16px;}
+  .pball{width:72px;height:72px;border-width:5px;}
+  .pball::after{width:19px;height:19px;border-width:4px;}
+  .mtitle .l1{font-size:13px;}
+  .mtitle .l2{font-size:7px;letter-spacing:1px;}
+  .pxbtn{font-size:9px;padding:12px 18px;border-width:3px;box-shadow:3px 3px 0 #111;}
+  .pxbtn:hover{transform:none;box-shadow:3px 3px 0 #111;}
+  .pxbtn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #111;}
+  .flag-btn{width:46px;height:31px;border-width:2px;border-radius:5px;}
+  #s-oak{padding:8px;padding-top:max(8px,env(safe-area-inset-top));}
+  .oak-wrap{gap:8px;}
+  .oak-img{height:clamp(70px,14vh,110px);}
+  .dbox{padding:12px 13px 11px;border-width:3px;box-shadow:3px 3px 0 #111;}
+  .oak-lbl{font-size:6px;margin-bottom:6px;}
+  .oak-txt{font-size:13px;min-height:36px;}
+  .oak-ctrl{margin-top:10px;}
+  .tinp{font-size:14px;padding:9px 11px;border-width:3px;box-shadow:2px 2px 0 #111;}
+  .gbtn{font-size:8px;padding:10px 14px;border-width:3px;box-shadow:3px 3px 0 #111;}
+  .pk-grid{grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px;}
+  .pk-card{font-size:9px;padding:6px 3px;border-width:3px;box-shadow:2px 2px 0 #ccc;}
+  .pk-card .em{font-size:16px;}
+  #s-gen{gap:14px;}
+  .gb2{width:60px;height:60px;}
+  .gen-ttl{font-size:10px;}
+  .gen-st{font-size:12px;}
+  #s-book{padding:6px 6px 4px;gap:6px;}
+  .book-spread{grid-template-columns:1fr;grid-template-rows:38% 1fr;min-height:0;border-radius:6px;}
+  .book-spread::after{display:none;}
+  .p-left{min-height:0;}
+  .p-left::after{display:none;}
+  .trainer-spr{width:52px;left:6%;}
+  .poke-spr{width:68px;right:5%;}
+  .p-right{padding:10px 12px 8px;}
+  .p-right::after{display:none;}
+  .pg-badge{font-size:6px;}
+  .pg-ch{font-size:8px;margin-bottom:5px;}
+  .pg-rule{width:36px;margin-bottom:6px;}
+  .pg-body{font-size:12.5px;line-height:1.85;overflow-y:auto;}
+  .pg-body p:first-child::first-letter{font-size:1.9em;padding-right:5px;padding-top:5px;}
+  .p-foot{margin-top:4px;}
+  .foot-num{font-size:6px;}
+  .lvl-badge{font-size:5px;padding:2px 5px;}
+  .book-nav{gap:5px;}
+  .pxbtn.pb-blue,.pxbtn.pb-red,.pxbtn.pb-yel{font-size:7px;padding:9px 12px;border-width:3px;box-shadow:2px 2px 0 #111;}
+  .cry-btn{font-size:6px;padding:6px 8px;}
+  .dots{gap:5px;}
+  .dot{width:8px;height:8px;}
+  .end-ttl{font-size:12px;}
+  .end-sub{font-size:12px;}
+  .swipe-hint{display:block;position:absolute;bottom:6px;left:50%;transform:translateX(-50%);font-family:'Press Start 2P',monospace;font-size:6px;color:rgba(255,255,255,.3);pointer-events:none;z-index:25;white-space:nowrap;animation:pls 2s ease-in-out 1.5s 3 forwards;}
+}
+</style>
+</head>
+<body>
+
+<!-- MENU -->
+<div class="screen" id="s-menu">
+  <div class="stars" id="stars"></div>
+  <div class="menu-in">
+    <div class="pball"></div>
+    <div class="mtitle">
+      <span class="l1" id="m-title-line">POKÉMON STORY<br>ADVENTURE</span>
+      <span class="l2">✦ <span id="m-subtitle">A Reading Quest</span> ✦</span>
+    </div>
+    <!-- Language flags -->
+    <div class="lang-row">
+      <button class="flag-btn active" id="flag-en" onclick="setLang('en')" title="English">
+        <svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+          <rect width="60" height="40" fill="#012169"/>
+          <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/>
+          <path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" stroke-width="4.5"/>
+          <path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="13"/>
+          <path d="M30,0 V40 M0,20 H60" stroke="#C8102E" stroke-width="8"/>
+        </svg>
+      </button>
+      <button class="flag-btn" id="flag-is" onclick="setLang('is')" title="Íslenska">
+        <svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+          <rect width="60" height="40" fill="#003897"/>
+          <rect x="13" y="0" width="9" height="40" fill="#fff"/>
+          <rect x="0" y="15.5" width="60" height="9" fill="#fff"/>
+          <rect x="15" y="0" width="5" height="40" fill="#D72828"/>
+          <rect x="0" y="17.5" width="60" height="5" fill="#D72828"/>
+        </svg>
+      </button>
+    </div>
+    <button class="pxbtn pb-red" onclick="goOak()">▶ &nbsp;<span id="m-start">NEW STORY</span></button>
+    <p class="menu-note" id="m-note">Stories adapt to your reading level</p>
+  </div>
+</div>
+
+<!-- OAK -->
+<div class="screen off" id="s-oak">
+  <div class="oak-wrap">
+    <img src="profoak.png" class="oak-img" alt="Prof. Oak">
+    <div class="dbox">
+      <div class="oak-lbl" id="oak-lbl">⬡ PROF. OAK</div>
+      <div class="oak-txt" id="oak-txt"></div>
+      <div class="oak-ctrl" id="oak-ctrl"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GENERATING -->
+<div class="screen off" id="s-gen">
+  <div class="gb2"></div>
+  <div class="gen-ttl" id="gen-ttl">BUILDING YOUR<br>ADVENTURE...</div>
+  <div class="gen-st" id="gen-st">Crafting your story...</div>
+</div>
+
+<!-- BOOK -->
+<div class="screen off" id="s-book">
+  <div class="book-outer">
+    <div class="book-spread" id="spread">
+      <div class="p-left" id="p-left">
+        <img class="bg-img" id="bg-img" src="" alt="">
+        <canvas class="p-canvas" id="p-canvas"></canvas>
+        <img class="trainer-spr" id="tr-spr" src="" alt="Trainer">
+        <img class="poke-spr" id="pk-spr" src="" alt="Pokemon">
+      </div>
+      <div class="p-right">
+        <div>
+          <div class="pg-top">
+            <div class="pg-badge" id="pg-badge">PAGE 1 OF 5</div>
+            <div class="lvl-badge" id="lvl-badge">GR.K</div>
+          </div>
+          <div class="pg-ch" id="pg-ch">—</div>
+          <div class="pg-rule"></div>
+          <div class="pg-body" id="pg-body">
+            <div class="sk" style="height:13px;width:90%"></div>
+            <div class="sk" style="height:13px;width:100%"></div>
+            <div class="sk" style="height:13px;width:80%"></div>
+            <div class="sk" style="height:13px;width:95%"></div>
+            <div class="sk" style="height:13px;width:72%"></div>
+          </div>
+        </div>
+        <div class="p-foot">
+          <span class="foot-num" id="foot-num">◂ 1 ▸</span>
+          <span style="font-size:12px;opacity:.4">✦</span>
+        </div>
+      </div>
+      <div class="swipe-hint" id="swipe-hint">← SWIPE →</div>
+      <div class="end-veil" id="end-veil">
+        <div style="font-size:50px">🎉</div>
+        <div class="end-ttl" id="end-ttl">THE END!</div>
+        <div class="end-sub" id="end-sub"></div>
+        <button class="pxbtn pb-red" style="margin-top:4px" id="end-menu-btn" onclick="backMenu()">⬡ MAIN MENU</button>
+      </div>
+    </div>
+  </div>
+  <div class="book-nav">
+    <button class="pxbtn pb-blue" id="btn-prev" onclick="prevPage()" disabled>◀ PREV</button>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="cry-btn" id="cry-btn" onclick="playCry()">🔊 CRY</button>
+      <div class="dots" id="dots"></div>
+    </div>
+    <button class="pxbtn pb-red" id="btn-next" onclick="nextPage()">NEXT ▶</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════
+   ASSETS
+══════════════════════════════════ */
+const BGS={forest:'bg_forest.jpg',village:'bg_village.jpg',snow:'bg_snow.jpg',cherry:'bg_cherry.jpg',volcano:'bg_volcano.jpg',beach:'bg_beach.jpg',sunset:'bg_sunset.jpg',cave:'bg_cave.jpg'};
+const TRAINERS=['trainer1.png','trainer2.png','trainer3.png'];
+
+/* ══════════════════════════════════
+   LANGUAGE SYSTEM
+══════════════════════════════════ */
+let lang='en';
+
+const L={
+  en:{
+    menuSubtitle:'A Reading Quest',
+    menuStart:'NEW STORY',
+    menuNote:'Stories adapt to your reading level',
+    oakLabel:'⬡ PROF. OAK',
+    genTitle:'BUILDING YOUR<br>ADVENTURE...',
+    genStatus:'Crafting your story...',
+    pageOf:(i,t)=>`PAGE ${i} OF ${t}`,
+    prevBtn:'◀ PREV',
+    nextBtn:'NEXT ▶',
+    endBtn:'THE END ★',
+    cryBtn:'🔊 CRY',
+    endTitle:'THE END!',
+    endSub:(n,p)=>`${n} and ${p} — friends forever!`,
+    endMenuBtn:'⬡ MAIN MENU',
+    swipeHint:'← SWIPE →',
+    continueBtn:'Continue ▶',
+    reallyBtn:'Really?! ▶',
+    letsgoBtn:"Let's go! ▶",
+    okBtn:'OK ▶',
+    boy:'Boy', girl:'Girl',
+    chooseBtn:'Choose! ▶',
+    startBtn:'⚡ START ADVENTURE!',
+    he:'he', she:'she', his:'his', her:'her',
+    oakSteps:[
+      "Hello there! Welcome to the world of Pokémon! My name is Oak — Professor Oak!",
+      "Today I'll craft a personalised story just for you — adapted perfectly to your reading level!",
+      "I need to ask a few questions first. Your answers shape a one-of-a-kind adventure. Ready?",
+      "First — what is your name, young trainer?",
+      d=>`${d.name}! Great name! And how old are you, ${d.name}?`,
+      d=>`${d.age} years old! I know the perfect reading level for you. Are you a boy or a girl?`,
+      d=>`A ${d.gender}! Which Pokémon would you like to meet on your adventure?`,
+      d=>`${d.pokemon}! Magnificent choice, ${d.name}! Your adventure awaits!`,
+    ],
+    namePh:'Your name...',nameErr:'Please tell me your name!',
+    agePh:'Your age...',ageErr:'Please enter a valid age!',
+  },
+  is:{
+    menuSubtitle:'Lestraræfing',
+    menuStart:'NÝTT ÆVINTÝRI',
+    menuNote:'Sögur aðlagast að lestrarþrepi þínu',
+    oakLabel:'⬡ PRÓFESSOR EIK',
+    genTitle:'BYGGI ÆVINTÝRI<br>ÞITT...',
+    genStatus:'Smíða sögu þína...',
+    pageOf:(i,t)=>`BLAÐSÍÐA ${i} AF ${t}`,
+    prevBtn:'◀ TIL BAKA',
+    nextBtn:'NÆSTA ▶',
+    endBtn:'LOKIÐ ★',
+    cryBtn:'🔊 HLJÓÐ',
+    endTitle:'LOKIÐ!',
+    endSub:(n,p)=>`${n} og ${p} — vinir að eilífu!`,
+    endMenuBtn:'⬡ AÐALVALMYND',
+    swipeHint:'← STRJÚKA →',
+    continueBtn:'Áfram ▶',
+    reallyBtn:'Satt?! ▶',
+    letsgoBtn:'Við skulum! ▶',
+    okBtn:'Í lagi ▶',
+    boy:'Drengur', girl:'Stúlka',
+    chooseBtn:'Velja! ▶',
+    startBtn:'⚡ HEFJA ÆVINTÝRI!',
+    he:'hann', she:'hún', his:'hans', her:'hennar',
+    oakSteps:[
+      "Halló! Velkomin í heim Pokémon! Ég heiti Eik — Prófessor Eik!",
+      "Í dag mun ég búa til sérsniðna sögu fyrir þig — fullkomlega aðlagaða að lestrarþrepi þínu!",
+      "Ég þarf að spyrja nokkurra spurninga fyrst. Svörin þín móta einstakt ævintýri. Tilbúin/n?",
+      "Fyrst — hvað heitir þú, ungi þjálfarinn?",
+      d=>`${d.name}! Gott nafn! Og hversu gamall/gömul ert þú, ${d.name}?`,
+      d=>`${d.age} ára! Ég veit hvert lestrarþrepið þitt er. Ert þú drengur eða stúlka?`,
+      d=>`Frábært! Hvaða Pokémon villtu hitta í ævintýrinu þínu?`,
+      d=>`${d.pokemon}! Frábær val, ${d.name}! Ævintýrið þitt bíður!`,
+    ],
+    namePh:'Nafnið þitt...',nameErr:'Vinsamlegast segðu mér nafnið þitt!',
+    agePh:'Aldurinn þinn...',ageErr:'Vinsamlegast sláðu inn gilt aldur!',
+  }
+};
+
+function t(key,...args){
+  const v=L[lang][key];
+  return typeof v==='function'?v(...args):v;
+}
+
+function setLang(l){
+  lang=l;
+  document.documentElement.lang=l;
+  document.getElementById('flag-en').classList.toggle('active',l==='en');
+  document.getElementById('flag-is').classList.toggle('active',l==='is');
+  document.getElementById('m-subtitle').textContent=t('menuSubtitle');
+  document.getElementById('m-start').textContent=t('menuStart');
+  document.getElementById('m-note').textContent=t('menuNote');
+}
+
+/* ══════════════════════════════════
+   READING LEVEL
+══════════════════════════════════ */
+function readingProfile(age){
+  const a=+age;
+  const IS=lang==='is';
+  if(a<=5)  return{grade:'K',   style:IS?'Einfaldar 3-5 orða setningar. Eingöngu algengustu 100 orðin á íslensku. Mikil endurtekning. Að hámarki 3 setningar í málsgrein. Skemmtilegt taktfast tónn.':'Extremely simple 3-5 word sentences only. Most common 100 words. Heavy repetition. Max 3 sentences per paragraph. Playful rhythmic tone.'};
+  if(a===6) return{grade:'1',   style:IS?'Stuttar 5-8 orða setningar. Einlægt orðaforði. 3-4 setningar í málsgrein. Hlýtt hvetjandi tónn.':'Short 5-8 word sentences. Basic vocabulary. 3-4 sentences per paragraph. Warm encouraging tone.'};
+  if(a===7) return{grade:'2',   style:IS?'Einfaldar setningar, sumar samsettar. 4-5 setningar í málsgrein. Skýr orsök og afleiðing.':'Simple and some compound sentences. 4-5 sentences per paragraph. Clear cause and effect.'};
+  if(a===8) return{grade:'3',   style:IS?'Blanda af einföldum og samsettum setningum. Orðaforði 3. bekkjar. 5-6 setningar. Létt ævintýratónn.':'Mix of simple and compound sentences. Grade 3 vocabulary. 5-6 sentences per paragraph. Light adventure tone.'};
+  if(a===9) return{grade:'4',   style:IS?'Fjölbreytt setningabygging. Ríkari orðaforði. Ein til tvær líkingar. 6-7 setningar. Grípandi ævintýrasaga.':'Varied sentence structure. Richer vocabulary. One or two similes. 6-7 sentences per paragraph. Engaging adventure narrative.'};
+  if(a===10)return{grade:'5',   style:IS?'Flóknar og einfaldar setningar blandaðar. Sterkur orðaforði. Myndlíkingar. 7-8 setningar. Spennandi saga.':'Complex and simple sentences mixed. Strong vocabulary. Metaphors and vivid imagery. 7-8 sentences. Exciting page-turning narrative.'};
+  if(a<=12) return{grade:'6',   style:IS?'Fágaðar setningar. Ríkur orðaforði. Sterk myndmál og tilfinningaleg dýpt. 8+ setningar.':'Sophisticated varied sentences. Rich vocabulary. Strong imagery and emotional depth. 8+ sentences.'};
+  if(a<=14) return{grade:'7-8', style:IS?'Flóknar setningar. Háþróaður orðaforði. Lagskiptar lýsingar. Þemadýpt. Bókmenntastil.':'Complex sentences. Advanced vocabulary. Layered descriptions. Thematic depth. Immersive literary style.'};
+  return     {grade:'9+',  style:IS?'Þroskað bókmenntastil. Háþróaður orðaforði og myndmál. Flókin þemu.':'Mature literary style. Advanced vocabulary and figurative language. Complex themes.'};
+}
+
+/* ══════════════════════════════════
+   STARS
+══════════════════════════════════ */
+(()=>{const c=document.getElementById('stars');for(let i=0;i<90;i++){const s=document.createElement('div');s.className='st';const z=(Math.random()*2+1).toFixed(1);s.style.cssText=`width:${z}px;height:${z}px;left:${(Math.random()*100).toFixed(2)}%;top:${(Math.random()*100).toFixed(2)}%;--d:${(2+Math.random()*5).toFixed(1)}s;--dl:${(Math.random()*5).toFixed(1)}s;`;c.appendChild(s);}})();
+
+/* ══════════════════════════════════
+   ROUTER / TOAST
+══════════════════════════════════ */
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.add('off'));document.getElementById(id).classList.remove('off');}
+function toast(m,d=4000){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),d);}
+
+/* ══════════════════════════════════
+   USER DATA
+══════════════════════════════════ */
+const U={name:'',age:'',gender:'',pokemon:'',pokeId:0};
+const POKES=[
+  {n:'Pikachu',e:'⚡',id:25},{n:'Charmander',e:'🔥',id:4},{n:'Bulbasaur',e:'🌿',id:1},
+  {n:'Squirtle',e:'💧',id:7},{n:'Eevee',e:'🍂',id:133},{n:'Gengar',e:'👻',id:94},
+  {n:'Snorlax',e:'💤',id:143},{n:'Mewtwo',e:'🌀',id:150},{n:'Jigglypuff',e:'🎵',id:39},
+  {n:'Charizard',e:'🐉',id:6},{n:'Meowth',e:'🪙',id:52},{n:'Lucario',e:'🔵',id:448}
+];
+
+/* ══════════════════════════════════
+   OAK DIALOGUE
+══════════════════════════════════ */
+let step=0;
+
+function goOak(){show('s-oak');step=0;renderStep();}
+
+function renderStep(){
+  const steps=L[lang].oakSteps;
+  const raw=typeof steps[step]==='function'?steps[step](U):steps[step];
+  typewrite('oak-txt',raw);
+  document.getElementById('oak-lbl').textContent=t('oakLabel');
+  const ctrl=document.getElementById('oak-ctrl');
+  ctrl.innerHTML='';
+
+  if(step===0) ctrl.appendChild(mkB(t('continueBtn'),'pxbtn pb-grn',()=>{step++;renderStep();}));
+  else if(step===1) ctrl.appendChild(mkB(t('reallyBtn'),'pxbtn pb-grn',()=>{step++;renderStep();}));
+  else if(step===2) ctrl.appendChild(mkB(t('letsgoBtn'),'pxbtn pb-grn',()=>{step++;renderStep();}));
+  else if(step===3||step===4){
+    // text input — name or age
+    const isAge=step===4;
+    const row=document.createElement('div');row.className='inp-row';
+    const inp=document.createElement('input');
+    inp.className='tinp';
+    inp.placeholder=isAge?t('agePh'):t('namePh');
+    inp.type=isAge?'number':'text';
+    inp.maxLength=40;
+    const validate=v=>isAge?(+v>0&&+v<120):v.trim().length>0;
+    const errMsg=isAge?t('ageErr'):t('nameErr');
+    const ok=mkB(t('okBtn'),'pxbtn pb-grn',()=>{
+      if(!validate(inp.value)){inp.style.borderColor='var(--red)';inp.placeholder=errMsg;return;}
+      U[isAge?'age':'name']=inp.value.trim();step++;renderStep();
+    });
+    inp.onkeydown=e=>{if(e.key==='Enter')ok.click();};
+    row.appendChild(inp);row.appendChild(ok);ctrl.appendChild(row);
+    setTimeout(()=>inp.focus(),350);
+  }
+  else if(step===5){
+    const row=document.createElement('div');row.className='crow';
+    [{key:'Boy',lbl:t('boy'),cls:'gb-boy'},{key:'Girl',lbl:t('girl'),cls:'gb-girl'}].forEach(({key,lbl,cls})=>{
+      const b=document.createElement('button');b.className=`gbtn ${cls}`;
+      b.textContent=(key==='Boy'?'👦 ':'👧 ')+lbl;
+      b.onclick=()=>{U.gender=key;step++;renderStep();};
+      row.appendChild(b);
+    });
+    ctrl.appendChild(row);
+  }
+  else if(step===6){
+    const grid=document.createElement('div');grid.className='pk-grid';let sel=null;
+    POKES.forEach(p=>{
+      const c=document.createElement('button');c.className='pk-card';
+      c.innerHTML=`<span class="em">${p.e}</span>${p.n}`;
+      c.onclick=()=>{grid.querySelectorAll('.pk-card').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');sel=p;};
+      grid.appendChild(c);
+    });
+    const r2=document.createElement('div');r2.style.marginTop='9px';
+    const ok2=mkB(t('chooseBtn'),'pxbtn pb-grn',()=>{
+      if(!sel)return;U.pokemon=sel.n;U.pokeId=sel.id;step++;renderStep();
+    });
+    r2.appendChild(ok2);ctrl.appendChild(grid);ctrl.appendChild(r2);
+  }
+  else if(step===7){
+    const b=mkB(t('startBtn'),'pxbtn pb-red',()=>generate());
+    b.style.marginTop='11px';ctrl.appendChild(b);
+  }
+}
+
+function mkB(label,cls,fn){const b=document.createElement('button');b.className=cls;b.textContent=label;b.onclick=fn;return b;}
+let tw=null;
+function typewrite(id,txt){const el=document.getElementById(id);el.textContent='';if(tw)clearInterval(tw);let i=0;tw=setInterval(()=>{if(i<txt.length){el.textContent+=txt[i++];}else clearInterval(tw);},18);}
+
+/* ══════════════════════════════════
+   CRY + SPRITE
+══════════════════════════════════ */
+let cry=null;
+function loadCry(id){cry=new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`);}
+function playCry(){if(!cry)return;cry.currentTime=0;cry.play().catch(()=>toast('🔇 Enable audio!'));}
+function spriteUrl(id){return`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;}
+
+/* ══════════════════════════════════
+   GENERATE
+══════════════════════════════════ */
+let pages=[],cur=0;
+
+function generate(){
+  show('s-gen');
+  document.getElementById('gen-ttl').innerHTML=t('genTitle');
+  document.getElementById('gen-st').textContent=t('genStatus');
+  const{name,age,gender,pokemon,pokeId}=U;
+  const rp=readingProfile(age);
+  const he=gender==='Boy'?t('he'):t('she');
+  const his=gender==='Boy'?t('his'):t('her');
+  pages=builtIn(name,age,gender,pokemon,he,his).slice(0,5);
+  loadCry(pokeId);
+  document.getElementById('tr-spr').src=TRAINERS[Math.floor(Math.random()*TRAINERS.length)];
+  document.getElementById('pk-spr').src=spriteUrl(pokeId);
+  cur=0;buildDots();show('s-book');renderPage(0);
+}
+
+/* ══════════════════════════════════
+   RENDER PAGE
+══════════════════════════════════ */
+let animId=null,cleanFn=null;
+const FB_SCENES=['village','forest','forest','cherry','sunset'];
+
+function renderPage(i){
+  const pg=pages[i],tot=pages.length;
+  const rp=readingProfile(U.age);
+  document.getElementById('pg-badge').textContent=t('pageOf',i+1,tot);
+  document.getElementById('pg-ch').textContent=pg.title;
+  document.getElementById('pg-body').innerHTML=`<p>${pg.text}</p>`;
+  document.getElementById('foot-num').textContent=`◂ ${i+1} ▸`;
+  document.getElementById('lvl-badge').textContent=`GR.${rp.grade}`;
+  document.getElementById('btn-prev').disabled=i===0;
+  document.getElementById('btn-prev').textContent=t('prevBtn');
+  document.getElementById('cry-btn').textContent=t('cryBtn');
+  document.getElementById('end-ttl').textContent=t('endTitle');
+  document.getElementById('end-sub').textContent=t('endSub',U.name,U.pokemon);
+  document.getElementById('end-menu-btn').textContent=t('endMenuBtn');
+  const sh=document.getElementById('swipe-hint');if(sh)sh.textContent=t('swipeHint');
+  const nxt=document.getElementById('btn-next');
+  if(i===tot-1){nxt.textContent=t('endBtn');nxt.className='pxbtn pb-yel';}
+  else{nxt.textContent=t('nextBtn');nxt.className='pxbtn pb-red';}
+  document.querySelectorAll('.dot').forEach((d,idx)=>d.classList.toggle('on',idx===i));
+  const scene=pg.scene||FB_SCENES[i]||'forest';
+  document.getElementById('bg-img').src=BGS[scene]||BGS.forest;
+  startParticles(scene);
+  if(i===3)setTimeout(()=>playCry(),700);
+}
+
+/* ══════════════════════════════════
+   PARTICLES
+══════════════════════════════════ */
+function startParticles(scene){
+  if(animId){cancelAnimationFrame(animId);animId=null;}
+  if(cleanFn){cleanFn();cleanFn=null;}
+  const canvas=document.getElementById('p-canvas');
+  const ctx=canvas.getContext('2d');
+  const pl=document.getElementById('p-left');
+  canvas.width=pl.offsetWidth;canvas.height=pl.offsetHeight;
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);let pts=[];
+  if(scene==='forest'||scene==='cherry'){
+    const col=scene==='cherry'?['#ffb7c5','#ff8fa3','#ffd4df']:['#4a8a20','#6aaa30','#88cc44'];
+    for(let i=0;i<26;i++)pts.push({x:Math.random()*W,y:Math.random()*H,sz:3+Math.random()*5,sp:.3+Math.random()*.5,dx:(Math.random()-.5)*.4,rot:Math.random()*Math.PI*2,rs:(Math.random()-.5)*.04,c:col[Math.floor(Math.random()*col.length)]});
+    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.globalAlpha=.75;ctx.beginPath();ctx.ellipse(0,0,p.sz,p.sz*.5,0,0,Math.PI*2);ctx.fill();ctx.restore();p.y+=p.sp;p.x+=p.dx;p.rot+=p.rs;if(p.y>H+10){p.y=-10;p.x=Math.random()*W;}});animId=requestAnimationFrame(draw);}draw();
+  } else if(scene==='snow'){
+    for(let i=0;i<55;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.5,sp:.4+Math.random()*.7,dx:(Math.random()-.5)*.3});
+    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.fillStyle='rgba(255,255,255,.72)';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.sp;p.x+=p.dx;if(p.y>H+5){p.y=-5;p.x=Math.random()*W;}});animId=requestAnimationFrame(draw);}draw();
+  } else if(scene==='volcano'){
+    const iv=setInterval(()=>{pts.push({x:W*.5+(Math.random()-.5)*W*.15,y:H*.35,vx:(Math.random()-.5)*2.5,vy:-(2+Math.random()*3.5),r:2+Math.random()*3,life:1,c:['#ff8820','#ff4410','#ffcc30'][Math.floor(Math.random()*3)]});},90);
+    cleanFn=()=>clearInterval(iv);
+    function draw(){ctx.clearRect(0,0,W,H);pts=pts.filter(p=>p.life>0);pts.forEach(p=>{ctx.globalAlpha=p.life*.9;ctx.fillStyle=p.c;ctx.shadowBlur=8;ctx.shadowColor=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.x+=p.vx;p.y+=p.vy;p.vy+=.08;p.life-=.018;});ctx.globalAlpha=1;ctx.shadowBlur=0;animId=requestAnimationFrame(draw);}draw();
+  } else if(scene==='sunset'||scene==='cave'){
+    for(let i=0;i<28;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2,vy:-(0.2+Math.random()*.4),vx:(Math.random()-.5)*.2,life:Math.random()});
+    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.globalAlpha=Math.sin(p.life*Math.PI)*.5;ctx.fillStyle=scene==='cave'?'#aa88ff':'#ffdd88';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.vy;p.x+=p.vx;p.life+=.004;if(p.life>1||p.y<-5){p.life=0;p.y=H;p.x=Math.random()*W;}});ctx.globalAlpha=1;animId=requestAnimationFrame(draw);}draw();
+  } else if(scene==='beach'){
+    for(let i=0;i<20;i++)pts.push({x:Math.random()*W,y:.78*H+Math.random()*.15*H,r:1.5+Math.random()*3,vx:(Math.random()-.5)*.4,life:Math.random()});
+    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.globalAlpha=Math.sin(p.life*Math.PI)*.45;ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.stroke();p.x+=p.vx;p.life+=.007;if(p.life>1){p.life=0;p.x=Math.random()*W;}});ctx.globalAlpha=1;animId=requestAnimationFrame(draw);}draw();
+  } else {
+    for(let i=0;i<15;i++)pts.push({x:Math.random()*W,y:Math.random()*H*.8,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.3,r:1.5+Math.random()*2,life:Math.random()});
+    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.globalAlpha=Math.sin(p.life*Math.PI)*.55;ctx.fillStyle='#ffcc00';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.x+=p.vx;p.y+=p.vy;p.life+=.005;if(p.life>1){p.life=0;p.x=Math.random()*W;p.y=Math.random()*H*.8;}if(p.x<0)p.x=W;if(p.x>W)p.x=0;});ctx.globalAlpha=1;animId=requestAnimationFrame(draw);}draw();
+  }
+}
+
+/* ══════════════════════════════════
+   NAVIGATION
+══════════════════════════════════ */
+function flip(d){const sp=document.getElementById('spread');sp.classList.remove('ff','bf');void sp.offsetWidth;sp.classList.add(d==='f'?'ff':'bf');}
+function nextPage(){if(cur===pages.length-1){document.getElementById('end-veil').classList.add('show');return;}flip('f');setTimeout(()=>{cur++;renderPage(cur);},280);}
+function prevPage(){if(cur===0)return;flip('b');setTimeout(()=>{cur--;renderPage(cur);},280);}
+function buildDots(){const c=document.getElementById('dots');c.innerHTML='';pages.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===0?' on':'');d.onclick=()=>{flip(i>cur?'f':'b');setTimeout(()=>{cur=i;renderPage(i);},280);};c.appendChild(d);});}
+function backMenu(){Object.keys(U).forEach(k=>U[k]=k==='pokeId'?0:'');pages=[];cur=0;step=0;if(animId){cancelAnimationFrame(animId);animId=null;}if(cleanFn){cleanFn();cleanFn=null;}document.getElementById('end-veil').classList.remove('show');show('s-menu');}
+document.addEventListener('keydown',e=>{if(document.getElementById('s-book').classList.contains('off'))return;if(e.key==='ArrowRight'||e.key==='ArrowDown')nextPage();if(e.key==='ArrowLeft'||e.key==='ArrowUp')prevPage();});
+
+/* touch swipe */
+(()=>{let tx=0,moving=false;const sp=document.getElementById('spread');sp.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;moving=false;},{passive:true});sp.addEventListener('touchmove',e=>{const dx=Math.abs(e.touches[0].clientX-tx),dy=Math.abs(e.touches[0].clientY-tx);if(dx>8)moving=true;},{passive:true});sp.addEventListener('touchend',e=>{if(!moving)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>44){dx<0?nextPage():prevPage();}},{passive:true});})();
+
+window.addEventListener('resize',()=>{if(pages.length&&!document.getElementById('s-book').classList.contains('off')){startParticles((pages[cur]&&pages[cur].scene)||'forest');}});
+
+/* ══════════════════════════════════
+   BUILT-IN STORIES — ENGLISH + ICELANDIC
+   3 age tiers each language
+══════════════════════════════════ */
+function builtIn(name,age,gender,pokemon,he,his){
+  const a=+age;
+  const N=n=>n.charAt(0).toUpperCase()+n.slice(1); // capitalise
+
+  /* ── ICELANDIC ── */
+  if(lang==='is'){
+    if(a<=6)return[
+      {scene:'village',title:"Af stað!",text:`${name} vaknaði. Sólin skein. „Þetta er dagurinn!" sagði ${name}. ${N(name)} fór í skóna. ${N(name)} fór út. Fuglarnir söngju. Það var góður dagur.`},
+      {scene:'forest', title:"Stóru Tréin",text:`${name} fór í skóginn. Trén voru stór og há. Caterpie sat á blöðum. Það var lítið og grænt. ${name} sagði „Hæ!" Caterpie hrærðist. ${name} brosti stórt.`},
+      {scene:'forest', title:"Hjálpa Vin",text:`${name} sá Rattata. Það var fastur í þykku gróðri. ${name} hjálpaði því að komast laust. Rattata leit á ${name}. Það dundi halanum. Það þakkaði þannig.`},
+      {scene:'cherry', title:`Halló ${pokemon}!`,text:`Svo sá ${name} það. ${pokemon}! Það var svo sætt. Það leit á ${name}. ${name} rétti út höndina. ${pokemon} kom nær. Það snerti höndina. ${name} varð svo glaður/glöð!`},
+      {scene:'sunset', title:"Heim Saman",text:`${name} og ${pokemon} gengu heim. Himinninn var bleikur og appelsínugulur. Það var svo fallegt. Mamma stóð við dyrnar. „${name}!" sagði hún. Þetta var besti dagurinn.`}
+    ];
+    if(a<=10)return[
+      {scene:'village',title:"Nýtt Ævintýri",text:`${name} hoppaði upp úr rúminu um leið og sólin rann upp. Dagurinn leyndist einhvers sérstaks — spennu og töfra. ${N(name)} greip pokann sinn, veifaði bless til mömmu og hljóp niður slóðina frá Pallet Town. Pidgey-ar söngvu, og himinninn var blástur eins og ${name} hafði aldrei séð áður.`},
+      {scene:'forest', title:"Inn í Skóginn",text:`Viridian skógurinn var dásamlegur! Há tré mynduðu gullnar ljósgötur, og Caterpie-ar tyggðu með gleði á blöðum fyrir ofan. Butterfree-ar dönsuðu á milli blóma og dreifðu litarbogunum. ${name} gekk hægt og horfði á allt. Eitthvað hreyfðist í ruslinu á undan.`},
+      {scene:'forest', title:"Hjálpa til",text:`Lítið Oddish var fastur í þykkum þörnum! Það togaði og togaði en komst ekki laust. ${name} dró þornana varlega í sundur, einn í einu. Það tók tíma en ${name} gafst ekki upp. Þegar Oddish komst loks laust, hristi það bláu laufin sín af gleði og hoppaði í burtu — stoppaði einu sinni og leit aftur með þakklátt augnaráð.`},
+      {scene:'cherry', title:`Hitta ${pokemon}`,text:`Kirsuberjablómaslóðin var eins og eitthvað úr draumi, bleikir blómaísar rekulust hægt niður. Og þar — á milli fallandi blóma — stóð ${pokemon}. Það hafði björtustu og forvitnustu augu sem ${name} hafði séð. ${name} rétti hægt út höndina. Í langan tíma gerðist ekkert. Svo stígur ${pokemon} fram og snerti fingurna hans/hennar varlega. Hlýtt náladofi rann upp handlegginn.`},
+      {scene:'sunset', title:"Bestu Vinir",text:`${name} og ${pokemon} gengu heim undir himni málaðan í gull og rósarautt. Þau stöðvuðu á hæðinni og horfðu á sólina detta á bak við fjöllin. ${name} vissi í hjarta sínu að þau myndu deila hundruð fleiri ævintýra. „Bíddu bara," hvíslaði ${name}. ${pokemon} gaf frá sér hljóð af gleði, og þau gengu síðasta kaflann heim saman.`}
+    ];
+    return[
+      {scene:'village',title:"Morguntilfinníngin",text:`Það eru morgunar þar sem þú vaknar og finnur — áður en þú opnar augun — að eitthvað hefur breyst í heiminum. Þetta var einn slíkur morgunn fyrir ${name}. ${N(name)} var kominn upp og niður göturnar áður en morgunmatur var borðaður, Pallet Town hvarf á bak við hann/hana í hlýjum gylltu ljósi nýs dags, allur heimurinn lá á undan og hvatti.`},
+      {scene:'forest', title:"Leyndarmál Skógarins",text:`Viridian skógurinn var aldrei sami staðurinn tvisvar, og í dag klæddist hann besta búningnum sínum: ljósgeirar höggvu í gegnum laufþak eins og lýsigeirar, loftið þungt af barrviðarlykti og einhverju sætara sem ${name} gat aldrei nákvæmlega gefið nafn. ${N(name)} gekk án flýtis, fartölvan opinn, skráði allt — nákvæmt litbrigði Caterpie-grænunnar.`},
+      {scene:'forest', title:"Lítil Góðvild",text:`${name} heyrði það áður en ${he} sá það — lítil, pirruð hreyfing við rót gamalt eiks. Oddish hafði vafið sig djúpt í þyrnirunna, stutta fæturna þrýstandi gagnslaust gegn þornunum. Með vandvirkum og þolinmóðum höndum vann ${name} það laust, einn þorn í einu. Oddish blunkaði upp til hans/hennar, þreifaði síðan laufásinni að hendi hans/hennar — bendingur sem þurfti enga þýðingu.`},
+      {scene:'cherry', title:`${pokemon} Augnablikið`,text:`Kirsuberjablómaslóðin var næstum of falleg til að vera sönn, blómlar féllu í hægum spíralum í gylltu síðdegisljósi. ${name} hætti að anda. Standandi fullkomlega kyrr á miðri slóðinni var ${pokemon}, augnaráð þess fann hans/hennar strax — ekki vart, heldur einlægt og djúplægt forvitin, eins og það hefði einhvern veginn búist við þessum fundi. ${name} tók eitt vandvirt skref. Síðan gerði ${pokemon} slíkt hið sama.`},
+      {scene:'sunset', title:"Fyrsta Af Mörgum",text:`Þau gengu heim þegar himinninn sette upp bestu sýninguna ársins — lög af ambra, rósarauðu og fjólubláu staflaðar fyrir ofan fjarlægar hæðir. Enginn þeirra var í neinum flýti. ${name} hugsaði um allt sem gerðist í dag, og hvernig eitt síðdegi gæti hæglega endurskipulagt lögun framtíðar þinnar. ${pokemon} gekk við hlið hans/hennar, rólegur og viss, eins og það hefði alltaf verið þar.`}
+    ];
+  }
+
+  /* ── ENGLISH ── */
+  if(a<=6)return[
+    {scene:'village',title:"Time to Go!",text:`${name} woke up. The sun was up. "Today is the day!" ${name} put on ${his} shoes. ${name} went outside. The birds sang. It was a good day.`},
+    {scene:'forest', title:"Big Trees",text:`${name} went to the forest. The trees were big and tall. A Caterpie sat on a leaf. It was small and green. ${name} said "Hi!" The Caterpie wiggled. ${name} smiled big.`},
+    {scene:'forest', title:"Help a Friend",text:`${name} saw a Rattata. It was stuck in some vines. ${name} helped it get free. The Rattata looked at ${name}. It wagged its tail. It was saying thank you.`},
+    {scene:'cherry', title:`Hello ${pokemon}!`,text:`Then ${name} saw it. A ${pokemon}! It was so cute. It looked at ${name}. ${name} held out ${his} hand. ${pokemon} came close. It touched ${his} hand. ${name} felt so happy!`},
+    {scene:'sunset', title:"Home We Go",text:`${name} and ${pokemon} walked home. The sky was pink and orange. It was so pretty. Mom was at the door. "${name}!" she said. "Who is that?" It was the best day ever.`}
+  ];
+  if(a<=10)return[
+    {scene:'village',title:"A New Adventure",text:`${name} jumped out of bed as soon as the sun came up. Today felt different — exciting and full of magic. ${N(name)} grabbed ${his} bag, waved goodbye to Mom, and ran down the winding path out of Pallet Town. The Pidgeys were singing, and the sky was the brightest blue ${he} had ever seen.`},
+    {scene:'forest', title:"Into the Forest",text:`Viridian Forest was amazing! Tall trees made tunnels of golden light, and Caterpies munched happily on leaves above. Butterfrees danced between the flowers, their wings scattering tiny rainbows. ${name} walked slowly, looking at everything. ${N(he)} wrote in ${his} notebook: "Today the forest feels alive." Something rustled in the bushes ahead.`},
+    {scene:'forest', title:"Helping Out",text:`A little Oddish was tangled in thick vines! It tugged and tugged but could not get free. ${name} gently pulled the vines apart, one by one. It took a while, but ${he} never gave up. When Oddish finally popped free, it wiggled its blue leaves with joy and bounced away — stopping once to look back with grateful eyes.`},
+    {scene:'cherry', title:`Meeting ${pokemon}`,text:`The cherry blossom path was like something from a dream, pink petals drifting softly down. And there — between the falling blossoms — stood a ${pokemon}. It had the brightest, most curious eyes ${name} had ever seen. ${name} held very still and slowly reached out ${his} hand. For a long moment nothing happened. Then ${pokemon} stepped forward and gently touched ${his} fingers. A warm tingle rushed up ${his} arm.`},
+    {scene:'sunset', title:"Best Friends",text:`${name} and ${pokemon} walked home under a sky painted gold and rose. They stopped on the hill and watched the sun dip behind the mountains. ${name} knew with all ${his} heart that ${he} and ${pokemon} would share a hundred more adventures. "Just you wait," ${he} whispered. ${pokemon} made a happy sound, and they both smiled as they walked the rest of the way home together.`}
+  ];
+  return[
+    {scene:'village',title:"The Morning Feeling",text:`There are mornings when you wake before the alarm and feel — even before opening your eyes — that something has quietly shifted in the world. This was one of those mornings for ${name}. ${N(name)} was out of bed and down the lane before breakfast, Pallet Town disappearing behind ${him||'them'} in the warm amber light of a new day, the whole world stretched out ahead and inviting.`},
+    {scene:'forest', title:"Viridian's Secrets",text:`Viridian Forest was never the same place twice, and today it wore its finest costume: shafts of pale light cutting through the canopy like spotlights, the air heavy with pine resin and something sweeter ${name} could never quite name. ${N(name)} walked in no hurry, notebook open, recording everything — the precise shade of a Caterpie's green, the aerodynamics of a Butterfree navigating the still air.`},
+    {scene:'forest', title:"A Small Kindness",text:`${name} heard it before ${he} saw it — a small, frustrated rustling near the roots of an old oak. An Oddish had wound itself deep into a thicket of briars, its stubby legs pushing uselessly against the thorns. With careful and patient hands, ${name} worked it free, one thorn at a time. Oddish blinked up, then lightly pressed a leaf-tip to ${his} hand — a gesture that needed no translation.`},
+    {scene:'cherry', title:`The ${pokemon} Moment`,text:`The cherry blossom path was almost too beautiful to be real, petals falling in slow spirals through amber afternoon light. ${name} stopped breathing. Standing perfectly still in the middle of the path was a ${pokemon}, its gaze finding ${his} immediately — not wary, but genuinely and deeply curious, as if it had somehow been expecting this meeting. ${name} took one careful step forward. Then ${pokemon} did the same, and the distance between them closed like a long-held breath finally released.`},
+    {scene:'sunset', title:"The First of Many",text:`They walked home as the sky staged its best performance of the year — layers of amber, rose, and violet stacked above the distant hills. Neither of them was in any hurry. ${name} thought about everything that had happened today, and how a single afternoon could quietly rearrange the shape of your whole future. ${pokemon} walked beside ${him||'them'}, calm and certain, as though it had always been there. In a way that mattered, ${name} thought, perhaps it had.`}
+  ];
+}
+</script>
+</body>
+</html>
