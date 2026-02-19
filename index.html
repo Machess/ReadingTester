@@ -88,12 +88,13 @@
       <div>
         <label class="form-label" style="font-size:11px;margin-top:8px;">Number of Pages</label>
         <select class="form-select" id="num-pages">
-          <option value="4">4 pages</option>
-          <option value="5" selected>5 pages</option>
-          <option value="6">6 pages</option>
-          <option value="7">7 pages</option>
-          <option value="8">8 pages</option>
+          <option value="10">10 pages (Short)</option>
+          <option value="12" selected>12 pages (Standard)</option>
+          <option value="14">14 pages (Recommended)</option>
+          <option value="16">16 pages (Long)</option>
+          <option value="18">18 pages (Epic)</option>
         </select>
+        <div class="hint">Longer stories provide better pacing and deeper immersion. 12-14 pages recommended for most ages.</div>
       </div>
       <div style="margin-top:12px;">
         <label class="form-label" style="font-size:11px;">Branching Style</label>
@@ -278,6 +279,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="fade-overlay" id="fade-overlay"></div>
 
 <script src="js/app.js"></script>
 </body>
