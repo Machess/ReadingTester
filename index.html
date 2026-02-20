@@ -40,6 +40,7 @@
     </div>
     <button class="pxbtn pb-red" onclick="goOak()">▶ &nbsp;<span id="m-start">NEW STORY</span></button>
     <button class="pxbtn pb-purple" onclick="goCreate()">📝 CREATE STORY</button>
+    <button class="pxbtn pb-yel" onclick="goPokedex()">📖 MY POKÉDEX</button>
     <button class="pxbtn pb-blue" onclick="goManage()">📚 MANAGE STORIES</button>
     <p class="menu-note" id="m-note">Dynamic stories from your library</p>
   </div>
@@ -220,6 +221,33 @@
   </div>
 </div>
 
+<!-- POKÉDEX -->
+<div class="screen off" id="s-pokedex">
+  <div class="pokedex-container">
+    <div class="pokedex-header">
+      <h1 class="pokedex-title">📖 MY POKÉDEX</h1>
+      <div class="pokedex-stats">
+        <div class="caught-count">
+          Caught: <span id="caught-count">0</span>/151
+        </div>
+        <button class="pxbtn pb-yel" onclick="showInventoryModal()" style="font-size:9px;padding:8px 12px;">
+          🎒 INVENTORY
+        </button>
+      </div>
+    </div>
+    
+    <div class="pokedex-scroll">
+      <div class="pokemon-grid" id="pokemon-grid">
+        <!-- Pokemon cards will be inserted here dynamically -->
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:15px;">
+      <button class="pxbtn pb-red" onclick="backToMenu()">⬅ BACK TO MENU</button>
+    </div>
+  </div>
+</div>
+
 <!-- OAK DIALOGUE -->
 <div class="screen off" id="s-oak">
   <div class="oak-wrap">
@@ -241,6 +269,9 @@
 
 <!-- BOOK READER -->
 <div class="screen off" id="s-book">
+  <div class="inventory-bar">
+    <div class="inventory-display" id="inventory-display"></div>
+  </div>
   <div class="book-outer">
     <div class="book-spread" id="spread">
       <div class="p-left">
@@ -283,6 +314,93 @@
       <button class="cry-btn" id="cry-btn" onclick="playCry()">🔊 CRY</button>
     </div>
     <button class="pxbtn pb-red" onclick="backToMenu()">⬡ MENU</button>
+  </div>
+</div>
+
+<!-- INVENTORY DISPLAY -->
+<div class="inventory-bar" id="inventory-bar" style="display:none;">
+  <div class="inventory-display" id="inventory-display"></div>
+</div>
+
+<!-- POKÉDEX MODAL -->
+<div class="pokedex-modal" id="pokedex-modal">
+  <div class="pokedex-device">
+    <div class="pdex-left">
+      <div class="pdex-lights">
+        <div class="pdex-light big"></div>
+        <div class="pdex-light small red"></div>
+        <div class="pdex-light small yellow"></div>
+        <div class="pdex-light small green"></div>
+      </div>
+      <div class="pdex-screen">
+        <img id="pdex-sprite" src="" alt="Pokemon">
+      </div>
+      <div class="pdex-controls">
+        <div class="pdex-button"></div>
+        <div class="pdex-dpad">
+          <div class="dpad-center"></div>
+        </div>
+      </div>
+      <div class="pdex-panel-green"></div>
+    </div>
+    <div class="pdex-right">
+      <div class="pdex-info-screen">
+        <h2 id="pdex-name">POKEMON</h2>
+        <div class="pdex-types" id="pdex-types"></div>
+        <div class="pdex-stats">
+          <span>HT: <span id="pdex-height">0m</span></span>
+          <span>WT: <span id="pdex-weight">0kg</span></span>
+        </div>
+        <p id="pdex-description">Loading...</p>
+        <div class="befriend-section">
+          <h3>🎁 How to Befriend:</h3>
+          <p id="pdex-befriend"></p>
+        </div>
+      </div>
+      <div class="pdex-buttons-grid">
+        <div class="pdex-btn-row">
+          <div class="pdex-btn blue"></div>
+          <div class="pdex-btn blue"></div>
+          <div class="pdex-btn blue"></div>
+          <div class="pdex-btn blue"></div>
+          <div class="pdex-btn blue"></div>
+        </div>
+        <div class="pdex-btn-row">
+          <div class="pdex-btn blue"></div>
+          <div class="pdex-btn blue"></div>
+          <div class="pdex-btn blue"></div>
+          <div class="pdex-btn blue"></div>
+          <div class="pdex-btn blue"></div>
+        </div>
+      </div>
+      <button class="pdex-close" onclick="closePokedex()">GOT IT!</button>
+    </div>
+  </div>
+</div>
+
+<!-- VOCABULARY QUIZ -->
+<div class="vocab-quiz" id="vocab-quiz">
+  <div class="vocab-content">
+    <h2>📖 Word Challenge!</h2>
+    <p class="vocab-context" id="vocab-context"></p>
+    <p class="vocab-question">What does "<span id="vocab-word"></span>" mean?</p>
+    <div class="vocab-options">
+      <button class="vocab-btn" onclick="checkVocab(0)" id="vocab-opt-0">Option A</button>
+      <button class="vocab-btn" onclick="checkVocab(1)" id="vocab-opt-1">Option B</button>
+      <button class="vocab-btn" onclick="checkVocab(2)" id="vocab-opt-2">Option C</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVENTORY MODAL -->
+<div class="inventory-modal" id="inventory-modal">
+  <div class="inventory-modal-content">
+    <h2>🎒 MY INVENTORY</h2>
+    <p class="inventory-desc">Items you can use to befriend Pokémon</p>
+    <div class="inventory-grid" id="inventory-modal-grid">
+      <!-- Items will be inserted here -->
+    </div>
+    <button class="pxbtn pb-red" onclick="closeInventoryModal()">CLOSE</button>
   </div>
 </div>
 

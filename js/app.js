@@ -2,18 +2,101 @@
    GLOBALS & CONFIG
 ═════════════════════════════════════════════════ */
 const BGS={village:'assets/bg_village.jpg',village_park:'assets/bg_village_park.jpg',forest:'assets/bg_forest.jpg',forest_stream:'assets/bg_forest_stream.jpg',forest_clearing:'assets/bg_forest_clearing.jpg',forest_deep:'assets/bg_forest_deep.jpg',mountain_valley:'assets/bg_mountain_valley.jpg',mountain_ridge:'assets/bg_mountain_ridge.jpg',mountain_peak:'assets/bg_mountain_peak.jpg',house_entry:'assets/bg_house_entry.jpg',house_living:'assets/bg_house_living.jpg',snow:'assets/bg_snow.jpg',cherry:'assets/bg_cherry.jpg',volcano:'assets/bg_volcano.jpg',beach:'assets/bg_beach.jpg',sunset:'assets/bg_sunset.jpg',cave:'assets/bg_cave.jpg'};
+
+const ITEMS={
+  oran_berry:{name:'Oran Berry',emoji:'🫐',description:'A sweet blue berry that restores energy. Most Pokémon love its taste!'},
+  pecha_berry:{name:'Pecha Berry',emoji:'🍑',description:'A soft, juicy pink berry with healing properties. Smells wonderful!'},
+  pokesnack:{name:'Pokésnack',emoji:'🍪',description:'A crunchy treat that all Pokémon enjoy. Perfect for making friends!'},
+  honey_jar:{name:'Honey Jar',emoji:'🍯',description:'Sweet and sticky honey. Bug-type Pokémon find it irresistible!'},
+  fresh_water:{name:'Fresh Water',emoji:'💧',description:'Cool, refreshing water. Water-type Pokémon especially love it.'},
+  moomoo_milk:{name:'Moomoo Milk',emoji:'🥛',description:'Creamy, nutritious milk from Miltank. Very popular with Normal-types!'},
+  rainbow_herb:{name:'Rainbow Herb',emoji:'🌿',description:'An aromatic herb with a calming scent. Grass-types are drawn to it.'},
+  stardust:{name:'Stardust',emoji:'✨',description:'Sparkly powder with a mystical glow. Psychic and Fairy Pokémon love it!'},
+  charcoal:{name:'Charcoal',emoji:'🔥',description:'Warm, glowing charcoal. Fire-type Pokémon gather around it.'},
+  silver_leaf:{name:'Silver Leaf',emoji:'🍃',description:'A rare, shimmering leaf. Flying-type Pokémon treasure it.'}
+};
+
+const TYPE_ITEM_MAP={
+  fire:'charcoal',
+  water:'fresh_water',
+  grass:'rainbow_herb',
+  bug:'honey_jar',
+  normal:'pokesnack',
+  psychic:'stardust',
+  fairy:'stardust',
+  flying:'silver_leaf',
+  electric:'oran_berry',
+  poison:'pecha_berry',
+  ground:'fresh_water',
+  rock:'fresh_water',
+  fighting:'moomoo_milk',
+  ice:'fresh_water',
+  ghost:'stardust',
+  dragon:'silver_leaf',
+  dark:'charcoal',
+  steel:'silver_leaf'
+};
+
 const POKES=[
-  {n:'Pikachu',e:'⚡',id:25},{n:'Charmander',e:'🔥',id:4},{n:'Bulbasaur',e:'🌿',id:1},
-  {n:'Squirtle',e:'💧',id:7},{n:'Eevee',e:'🍂',id:133},{n:'Gengar',e:'👻',id:94},
-  {n:'Snorlax',e:'💤',id:143},{n:'Mewtwo',e:'🌀',id:150},{n:'Jigglypuff',e:'🎵',id:39},
-  {n:'Charizard',e:'🐉',id:6},{n:'Meowth',e:'🪙',id:52},{n:'Lucario',e:'🔵',id:448}
+  {n:'Bulbasaur',e:'🌱',id:1},{n:'Ivysaur',e:'🌿',id:2},{n:'Venusaur',e:'🌺',id:3},
+  {n:'Charmander',e:'🔥',id:4},{n:'Charmeleon',e:'🔥',id:5},{n:'Charizard',e:'🐉',id:6},
+  {n:'Squirtle',e:'💧',id:7},{n:'Wartortle',e:'🌊',id:8},{n:'Blastoise',e:'🐢',id:9},
+  {n:'Caterpie',e:'🐛',id:10},{n:'Metapod',e:'🟢',id:11},{n:'Butterfree',e:'🦋',id:12},
+  {n:'Weedle',e:'🐛',id:13},{n:'Kakuna',e:'🟡',id:14},{n:'Beedrill',e:'🐝',id:15},
+  {n:'Pidgey',e:'🐦',id:16},{n:'Pidgeotto',e:'🦅',id:17},{n:'Pidgeot',e:'🦅',id:18},
+  {n:'Rattata',e:'🐀',id:19},{n:'Raticate',e:'🐀',id:20},{n:'Spearow',e:'🐦',id:21},
+  {n:'Fearow',e:'🦅',id:22},{n:'Ekans',e:'🐍',id:23},{n:'Arbok',e:'🐍',id:24},
+  {n:'Pikachu',e:'⚡',id:25},{n:'Raichu',e:'⚡',id:26},{n:'Sandshrew',e:'🦔',id:27},
+  {n:'Sandslash',e:'🦔',id:28},{n:'Nidoran♀',e:'💜',id:29},{n:'Nidorina',e:'💜',id:30},
+  {n:'Nidoqueen',e:'👑',id:31},{n:'Nidoran♂',e:'💙',id:32},{n:'Nidorino',e:'💙',id:33},
+  {n:'Nidoking',e:'👑',id:34},{n:'Clefairy',e:'⭐',id:35},{n:'Clefable',e:'✨',id:36},
+  {n:'Vulpix',e:'🦊',id:37},{n:'Ninetales',e:'🦊',id:38},{n:'Jigglypuff',e:'🎵',id:39},
+  {n:'Wigglytuff',e:'🎵',id:40},{n:'Zubat',e:'🦇',id:41},{n:'Golbat',e:'🦇',id:42},
+  {n:'Oddish',e:'🌱',id:43},{n:'Gloom',e:'🌺',id:44},{n:'Vileplume',e:'🌸',id:45},
+  {n:'Paras',e:'🍄',id:46},{n:'Parasect',e:'🍄',id:47},{n:'Venonat',e:'🐛',id:48},
+  {n:'Venomoth',e:'🦋',id:49},{n:'Diglett',e:'⛏️',id:50},{n:'Dugtrio',e:'⛏️',id:51},
+  {n:'Meowth',e:'🪙',id:52},{n:'Persian',e:'😼',id:53},{n:'Psyduck',e:'🦆',id:54},
+  {n:'Golduck',e:'🦆',id:55},{n:'Mankey',e:'🐵',id:56},{n:'Primeape',e:'🦍',id:57},
+  {n:'Growlithe',e:'🐕',id:58},{n:'Arcanine',e:'🐕',id:59},{n:'Poliwag',e:'🐸',id:60},
+  {n:'Poliwhirl',e:'🐸',id:61},{n:'Poliwrath',e:'🐸',id:62},{n:'Abra',e:'🔮',id:63},
+  {n:'Kadabra',e:'🔮',id:64},{n:'Alakazam',e:'🔮',id:65},{n:'Machop',e:'💪',id:66},
+  {n:'Machoke',e:'💪',id:67},{n:'Machamp',e:'💪',id:68},{n:'Bellsprout',e:'🌿',id:69},
+  {n:'Weepinbell',e:'🌿',id:70},{n:'Victreebel',e:'🌿',id:71},{n:'Tentacool',e:'🦑',id:72},
+  {n:'Tentacruel',e:'🦑',id:73},{n:'Geodude',e:'🪨',id:74},{n:'Graveler',e:'🪨',id:75},
+  {n:'Golem',e:'🪨',id:76},{n:'Ponyta',e:'🐴',id:77},{n:'Rapidash',e:'🐴',id:78},
+  {n:'Slowpoke',e:'🦛',id:79},{n:'Slowbro',e:'🦛',id:80},{n:'Magnemite',e:'🧲',id:81},
+  {n:'Magneton',e:'🧲',id:82},{n:'Farfetch\'d',e:'🦆',id:83},{n:'Doduo',e:'🦤',id:84},
+  {n:'Dodrio',e:'🦤',id:85},{n:'Seel',e:'🦭',id:86},{n:'Dewgong',e:'🦭',id:87},
+  {n:'Grimer',e:'💜',id:88},{n:'Muk',e:'💜',id:89},{n:'Shellder',e:'🐚',id:90},
+  {n:'Cloyster',e:'🐚',id:91},{n:'Gastly',e:'👻',id:92},{n:'Haunter',e:'👻',id:93},
+  {n:'Gengar',e:'👻',id:94},{n:'Onix',e:'🐍',id:95},{n:'Drowzee',e:'😴',id:96},
+  {n:'Hypno',e:'😴',id:97},{n:'Krabby',e:'🦀',id:98},{n:'Kingler',e:'🦀',id:99},
+  {n:'Voltorb',e:'⚡',id:100},{n:'Electrode',e:'⚡',id:101},{n:'Exeggcute',e:'🥚',id:102},
+  {n:'Exeggutor',e:'🌴',id:103},{n:'Cubone',e:'🦴',id:104},{n:'Marowak',e:'🦴',id:105},
+  {n:'Hitmonlee',e:'🥋',id:106},{n:'Hitmonchan',e:'🥊',id:107},{n:'Lickitung',e:'👅',id:108},
+  {n:'Koffing',e:'☁️',id:109},{n:'Weezing',e:'☁️',id:110},{n:'Rhyhorn',e:'🦏',id:111},
+  {n:'Rhydon',e:'🦏',id:112},{n:'Chansey',e:'💖',id:113},{n:'Tangela',e:'🌿',id:114},
+  {n:'Kangaskhan',e:'🦘',id:115},{n:'Horsea',e:'🐴',id:116},{n:'Seadra',e:'🐉',id:117},
+  {n:'Goldeen',e:'🐠',id:118},{n:'Seaking',e:'🐠',id:119},{n:'Staryu',e:'⭐',id:120},
+  {n:'Starmie',e:'💎',id:121},{n:'Mr. Mime',e:'🎭',id:122},{n:'Scyther',e:'🪲',id:123},
+  {n:'Jynx',e:'💋',id:124},{n:'Electabuzz',e:'⚡',id:125},{n:'Magmar',e:'🔥',id:126},
+  {n:'Pinsir',e:'🪲',id:127},{n:'Tauros',e:'🐂',id:128},{n:'Magikarp',e:'🐟',id:129},
+  {n:'Gyarados',e:'🐉',id:130},{n:'Lapras',e:'🦕',id:131},{n:'Ditto',e:'💧',id:132},
+  {n:'Eevee',e:'🦊',id:133},{n:'Vaporeon',e:'💧',id:134},{n:'Jolteon',e:'⚡',id:135},
+  {n:'Flareon',e:'🔥',id:136},{n:'Porygon',e:'💾',id:137},{n:'Omanyte',e:'🐚',id:138},
+  {n:'Omastar',e:'🐚',id:139},{n:'Kabuto',e:'🦀',id:140},{n:'Kabutops',e:'🦀',id:141},
+  {n:'Aerodactyl',e:'🦕',id:142},{n:'Snorlax',e:'💤',id:143},{n:'Articuno',e:'❄️',id:144},
+  {n:'Zapdos',e:'⚡',id:145},{n:'Moltres',e:'🔥',id:146},{n:'Dratini',e:'🐉',id:147},
+  {n:'Dragonair',e:'🐉',id:148},{n:'Dragonite',e:'🐉',id:149},{n:'Mewtwo',e:'🌀',id:150},
+  {n:'Mew',e:'✨',id:151}
 ];
 
 let lang='en';
 let cry=null;
 let animId=null,cleanFn=null;
 
-const U={name:'',age:'',gender:'',pokemon:'',pokeId:0};
+const U={name:'',age:'',gender:''};
+let userInventory={items:[],pokemon:[]};
 let currentStory=null;
 let currentPageId='start';
 let pageHistory=[];
@@ -50,11 +133,10 @@ const L={
       "Hello there! Welcome to the world of Pokémon! My name is Oak — Professor Oak!",
       "I'll select the perfect story for you from our library!",
       "I need to ask a few questions first. Ready?",
-      "First — what is your name, young trainer?",
+      "First — what is your name, young reader?",
       d=>`${d.name}! Great name! And how old are you, ${d.name}?`,
       d=>`${d.age} years old! Perfect. Are you a boy or a girl?`,
-      d=>`A ${d.gender}! Which Pokémon would you like as your companion?`,
-      d=>`${d.pokemon}! Excellent choice, ${d.name}! Let me find the perfect adventure for you!`
+      d=>`A ${d.gender}! Excellent, ${d.name}! Let me find the perfect adventure for you!`
     ],
     namePh:'Your name...',nameErr:'Please tell me your name!',
     agePh:'Your age...',ageErr:'Please enter a valid age!',
@@ -143,6 +225,44 @@ function spriteUrl(id){return`https://raw.githubusercontent.com/PokeAPI/sprites/
 function backToMenu(){Object.keys(U).forEach(k=>U[k]=k==='pokeId'?0:'');currentStory=null;currentPageId='start';pageHistory=[];step=0;if(animId){cancelAnimationFrame(animId);animId=null;}if(cleanFn){cleanFn();cleanFn=null;}document.getElementById('end-veil').classList.remove('show');show('s-menu');}
 function goCreate(){show('s-create');document.getElementById('theme').addEventListener('change',e=>{document.getElementById('theme-custom').style.display=e.target.value==='custom'?'block':'none';});document.querySelectorAll('input[name="pokemon-compat"]').forEach(r=>r.addEventListener('change',e=>{document.getElementById('pokemon-specific').style.display=e.target.value==='specific'?'block':'none';}));}
 function goManage(){show('s-manage');renderLibrary();}
+function goPokedex(){
+  loadInventory();
+  show('s-pokedex');
+  renderPokedex();
+}
+
+function renderPokedex(){
+  const grid=document.getElementById('pokemon-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  
+  POKES.forEach(p=>{
+    const caught=userInventory.pokemon.includes(p.id);
+    const card=document.createElement('div');
+    card.className=`pokemon-card ${caught?'caught':'unknown'}`;
+    
+    if(caught){
+      card.innerHTML=`
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png" alt="${p.n}">
+        <span class="poke-number">#${String(p.id).padStart(3,'0')}</span>
+        <span class="poke-name">${p.n}</span>
+      `;
+      card.onclick=()=>showPokedex(p.id,false);
+    }else{
+      card.innerHTML=`
+        <div class="silhouette">?</div>
+        <span class="poke-number">#${String(p.id).padStart(3,'0')}</span>
+        <span class="poke-name">???</span>
+      `;
+    }
+    
+    grid.appendChild(card);
+  });
+  
+  const countEl=document.getElementById('caught-count');
+  if(countEl)countEl.textContent=userInventory.pokemon.length;
+}
+
 
 /* ═════════════════════════════════════════════════
    STARS ANIMATION
@@ -201,6 +321,358 @@ function loadLibrary(){
   }
 }
 
+/* ═════════════════════════════════════════════════
+   INVENTORY MANAGEMENT
+═════════════════════════════════════════════════ */
+function loadInventory(){
+  try{
+    const stored=localStorage.getItem('userInventory');
+    if(stored){
+      userInventory=JSON.parse(stored);
+    }
+  }catch(e){
+    userInventory={items:[],pokemon:[]};
+  }
+}
+
+function saveInventory(){
+  try{
+    localStorage.setItem('userInventory',JSON.stringify(userInventory));
+  }catch(e){
+    console.error('Failed to save inventory',e);
+  }
+}
+
+function addItem(itemKey){
+  if(!userInventory.items.includes(itemKey)){
+    userInventory.items.push(itemKey);
+    saveInventory();
+    const item=ITEMS[itemKey];
+    toast(`Found ${item.emoji} ${item.name}!`,3000,true);
+    return true;
+  }
+  return false;
+}
+
+function hasItem(itemKey){
+  return userInventory.items.includes(itemKey);
+}
+
+function addPokemon(pokemonId){
+  if(!userInventory.pokemon.includes(pokemonId)){
+    userInventory.pokemon.push(pokemonId);
+    saveInventory();
+    const poke=POKES.find(p=>p.id===pokemonId);
+    toast(`${poke.e} ${poke.n} joined you!`,3000,true);
+    return true;
+  }
+  return false;
+}
+
+function hasPokemon(pokemonId){
+  return userInventory.pokemon.includes(pokemonId);
+}
+
+function renderInventory(){
+  const container=document.getElementById('inventory-display');
+  if(!container)return;
+  
+  container.innerHTML='';
+  
+  userInventory.items.forEach(itemKey=>{
+    const item=ITEMS[itemKey];
+    if(item){
+      const span=document.createElement('span');
+      span.className='inv-item';
+      span.title=item.name;
+      span.textContent=item.emoji;
+      container.appendChild(span);
+    }
+  });
+  
+  if(userInventory.pokemon.length>0){
+    const pokeCount=document.createElement('span');
+    pokeCount.className='inv-pokemon-count';
+    pokeCount.textContent=`⚡${userInventory.pokemon.length}`;
+    pokeCount.title=`${userInventory.pokemon.length} Pokémon caught`;
+    container.appendChild(pokeCount);
+  }
+}
+
+/* ═════════════════════════════════════════════════
+   POKEDEX SYSTEM
+═════════════════════════════════════════════════ */
+async function showPokedex(pokemonId,showBefriend=true){
+  const modal=document.getElementById('pokedex-modal');
+  modal.classList.add('loading');
+  modal.classList.add('show');
+  
+  try{
+    const response=await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+    const data=await response.json();
+    const speciesRes=await fetch(data.species.url);
+    const speciesData=await speciesRes.json();
+    
+    document.getElementById('pdex-sprite').src=data.sprites.other['official-artwork'].front_default;
+    document.getElementById('pdex-name').textContent=data.name.toUpperCase();
+    document.getElementById('pdex-height').textContent=`${(data.height/10).toFixed(1)}m`;
+    document.getElementById('pdex-weight').textContent=`${(data.weight/10).toFixed(1)}kg`;
+    
+    const typesDiv=document.getElementById('pdex-types');
+    typesDiv.innerHTML='';
+    data.types.forEach(t=>{
+      const typeSpan=document.createElement('span');
+      typeSpan.className=`type-badge type-${t.type.name}`;
+      typeSpan.textContent=t.type.name.toUpperCase();
+      typesDiv.appendChild(typeSpan);
+    });
+    
+    const flavorText=speciesData.flavor_text_entries.find(e=>e.language.name==='en');
+    document.getElementById('pdex-description').textContent=flavorText?.flavor_text.replace(/\f/g,' ')||'A mysterious Pokémon!';
+    
+    if(showBefriend){
+      const primaryType=data.types[0].type.name;
+      const itemKey=TYPE_ITEM_MAP[primaryType]||'pokesnack';
+      const item=ITEMS[itemKey];
+      document.getElementById('pdex-befriend').innerHTML=`Give it <strong>${item.emoji} ${item.name}</strong>!<br>${item.description}`;
+      document.querySelector('.befriend-section').style.display='block';
+    }else{
+      document.querySelector('.befriend-section').style.display='none';
+    }
+    
+    modal.classList.remove('loading');
+  }catch(e){
+    console.error('Failed to load Pokémon data:',e);
+    toast('⚠️ Failed to load Pokédex data');
+    closePokedex();
+  }
+}
+
+function closePokedex(){
+  document.getElementById('pokedex-modal').classList.remove('show');
+}
+
+/* ═════════════════════════════════════════════════
+   VOCABULARY QUIZ SYSTEM
+═════════════════════════════════════════════════ */
+function showVocabQuiz(){
+  if(!currentStory.meta||!currentStory.meta.vocabularyWord){
+    showOakEnding();
+    return;
+  }
+  
+  const word=currentStory.meta.vocabularyWord;
+  const correctDef=currentStory.meta.vocabularyDefinition;
+  const wrongDefs=currentStory.meta.vocabularyWrongAnswers||[];
+  
+  document.getElementById('vocab-word').textContent=word;
+  document.getElementById('vocab-context').textContent=`Remember: "${currentStory.meta.vocabularyContext||''}"`;
+  
+  const answers=[correctDef,...wrongDefs].sort(()=>Math.random()-0.5);
+  answers.forEach((ans,i)=>{
+    const btn=document.getElementById(`vocab-opt-${i}`);
+    btn.textContent=ans;
+    btn.className='vocab-btn';
+  });
+  
+  window.vocabCorrectIndex=answers.indexOf(correctDef);
+  
+  document.getElementById('vocab-quiz').classList.add('show');
+}
+
+function checkVocab(choice){
+  const btns=document.querySelectorAll('.vocab-btn');
+  btns.forEach(btn=>btn.disabled=true);
+  
+  const chosenBtn=document.getElementById(`vocab-opt-${choice}`);
+  
+  if(choice===window.vocabCorrectIndex){
+    chosenBtn.classList.add('correct');
+    toast('✅ Correct! Great job!',2000,true);
+  }else{
+    chosenBtn.classList.add('wrong');
+    document.getElementById(`vocab-opt-${window.vocabCorrectIndex}`).classList.add('correct');
+    toast('Not quite, but nice try!',2000);
+  }
+  
+  setTimeout(()=>{
+    document.getElementById('vocab-quiz').classList.remove('show');
+    btns.forEach(btn=>{
+      btn.disabled=false;
+      btn.className='vocab-btn';
+    });
+    showOakEnding();
+  },2500);
+}
+
+/* ═════════════════════════════════════════════════
+   POKEMON ENCOUNTER & ITEM COLLECTION
+═════════════════════════════════════════════════ */
+function showPokemonEncounter(pokemonId){
+  // Show pokemon sprite
+  const pkSprite=document.getElementById('pk-spr');
+  pkSprite.src=spriteUrl(pokemonId);
+  pkSprite.style.display='block';
+  
+  // Load cry
+  loadCry(pokemonId);
+  
+  // Show Pokedex after a moment
+  setTimeout(()=>{
+    showPokedex(pokemonId,true);
+    
+    // After pokedex closes, check if user can befriend
+    setTimeout(()=>{
+      const pokemon=POKES.find(p=>p.id===pokemonId);
+      if(!pokemon)return;
+      
+      // Get required item from type mapping
+      const primaryType=getPokemonType(pokemonId);
+      const requiredItem=TYPE_ITEM_MAP[primaryType]||'pokesnack';
+      
+      // Check if already caught
+      if(hasPokemon(pokemonId)){
+        toast(`You already befriended ${pokemon.n}!`,3000);
+        return;
+      }
+      
+      // Check if user has the item
+      if(hasItem(requiredItem)){
+        showBefriendButton(pokemonId,requiredItem);
+      }else{
+        const item=ITEMS[requiredItem];
+        toast(`${pokemon.n} appeared! You need ${item.emoji} ${item.name} to befriend it.`,4000);
+        setTimeout(()=>{
+          pkSprite.style.display='none';
+        },3000);
+      }
+    },1000);
+  },1500);
+}
+
+function collectItem(itemKey){
+  if(addItem(itemKey)){
+    renderInventory();
+    const item=ITEMS[itemKey];
+    toast(`Found ${item.emoji} ${item.name}! You can use this to befriend Pokémon!`,4000,true);
+  }
+}
+
+function getPokemonType(pokemonId){
+  // This would normally fetch from PokeAPI, but for speed we'll use a simple mapping
+  const typeMap={
+    1:'grass',4:'fire',7:'water',10:'bug',25:'electric',54:'water',74:'rock',
+    // Add more as needed
+  };
+  return typeMap[pokemonId]||'normal';
+}
+
+function showBefriendButton(pokemonId,itemKey){
+  const pokemon=POKES.find(p=>p.id===pokemonId);
+  const item=ITEMS[itemKey];
+  
+  const choiceContainer=document.getElementById('choice-container');
+  const befriendDiv=document.createElement('div');
+  befriendDiv.className='befriend-action';
+  befriendDiv.innerHTML=`
+    <p class="befriend-text">✨ ${pokemon.n} is interested in your ${item.emoji} ${item.name}!</p>
+    <button class="choice-btn befriend-btn" onclick="befriendPokemon(${pokemonId},'${itemKey}')">
+      💝 BEFRIEND ${pokemon.n.toUpperCase()}
+    </button>
+  `;
+  
+  // Insert at top of choice container
+  if(choiceContainer.firstChild){
+    choiceContainer.insertBefore(befriendDiv,choiceContainer.firstChild);
+  }else{
+    choiceContainer.appendChild(befriendDiv);
+  }
+}
+
+function befriendPokemon(pokemonId,itemKey){
+  const pokemon=POKES.find(p=>p.id===pokemonId);
+  
+  // Remove the item
+  const itemIndex=userInventory.items.indexOf(itemKey);
+  if(itemIndex>-1){
+    userInventory.items.splice(itemIndex,1);
+    saveInventory();
+    renderInventory();
+  }
+  
+  // Show pokeball animation
+  showPokeballAnimation(()=>{
+    // Add pokemon to collection
+    addPokemon(pokemonId);
+    
+    // Hide pokemon sprite
+    document.getElementById('pk-spr').style.display='none';
+    
+    // Remove befriend button
+    const befriendDiv=document.querySelector('.befriend-action');
+    if(befriendDiv)befriendDiv.remove();
+    
+    toast(`🎉 ${pokemon.n} is now your friend!`,3000,true);
+  });
+}
+
+function showPokeballAnimation(callback){
+  const overlay=document.createElement('div');
+  overlay.className='pokeball-overlay';
+  overlay.innerHTML=`
+    <div class="pokeball-animation">
+      <div class="pokeball">
+        <div class="pokeball-top"></div>
+        <div class="pokeball-middle"></div>
+        <div class="pokeball-bottom"></div>
+        <div class="pokeball-button"></div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  
+  setTimeout(()=>{
+    overlay.classList.add('catching');
+  },100);
+  
+  setTimeout(()=>{
+    overlay.classList.add('caught');
+  },2000);
+  
+  setTimeout(()=>{
+    overlay.remove();
+    if(callback)callback();
+  },3000);
+}
+
+function showInventoryModal(){
+  loadInventory();
+  const modal=document.getElementById('inventory-modal');
+  const grid=document.getElementById('inventory-modal-grid');
+  grid.innerHTML='';
+  
+  // Show all 10 items
+  Object.entries(ITEMS).forEach(([key,item])=>{
+    const count=userInventory.items.filter(i=>i===key).length;
+    const itemCard=document.createElement('div');
+    itemCard.className='inventory-item-card';
+    itemCard.innerHTML=`
+      <div class="item-emoji">${item.emoji}</div>
+      <div class="item-name">${item.name}</div>
+      <div class="item-count">x${count}</div>
+      <div class="item-desc">${item.description}</div>
+    `;
+    if(count===0)itemCard.classList.add('empty');
+    grid.appendChild(itemCard);
+  });
+  
+  modal.classList.add('show');
+}
+
+function closeInventoryModal(){
+  document.getElementById('inventory-modal').classList.remove('show');
+}
+
 function saveLibrary(lib){
   try{
     localStorage.setItem(STORAGE_KEY,JSON.stringify(lib));
@@ -217,7 +689,8 @@ function getDefaultLibrary(){
     version:'1.0',
     stories:{
       default_simple_en:DEFAULT_SIMPLE_EN,
-      default_medium_en:DEFAULT_MEDIUM_EN
+      default_medium_en:DEFAULT_MEDIUM_EN,
+      default_hard_en:DEFAULT_HARD_EN
     },
     settings:{playCount:{}}
   };
@@ -375,20 +848,6 @@ function renderStep(){
     ctrl.appendChild(row);
   }
   else if(step===6){
-    const grid=document.createElement('div');grid.className='pk-grid';let sel=null;
-    POKES.forEach(p=>{
-      const c=document.createElement('button');c.className='pk-card';
-      c.innerHTML=`<span class="em">${p.e}</span>${p.n}`;
-      c.onclick=()=>{grid.querySelectorAll('.pk-card').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');sel=p;};
-      grid.appendChild(c);
-    });
-    const r2=document.createElement('div');r2.style.marginTop='9px';
-    const ok2=mkB(t('chooseBtn'),'pxbtn pb-grn',()=>{
-      if(!sel)return;U.pokemon=sel.n;U.pokeId=sel.id;step++;renderStep();
-    });
-    r2.appendChild(ok2);ctrl.appendChild(grid);ctrl.appendChild(r2);
-  }
-  else if(step===7){
     const b=mkB(t('startBtn'),'pxbtn pb-red',()=>loadStoryAndStart());
     b.style.marginTop='11px';ctrl.appendChild(b);
   }
@@ -407,8 +866,11 @@ function loadStoryAndStart(){
     currentPageId=currentStory.startPage;
     pageHistory=[currentPageId];
     
-    loadCry(U.pokeId);
-    document.getElementById('pk-spr').src=spriteUrl(U.pokeId);
+    loadInventory();
+    renderInventory();
+    
+    // Hide pokemon sprite initially - will show if story has one
+    document.getElementById('pk-spr').style.display='none';
     
     show('s-book');
     renderPage(currentPageId);
@@ -444,6 +906,16 @@ function renderPage(pageId){
   const sceneBase=page.scene.split('_')[0];
   startParticles(sceneBase);
   
+  // Check for Pokemon encounter on this page
+  if(currentStory.meta.hasPokemon&&currentStory.meta.pokemonPage===pageId){
+    showPokemonEncounter(currentStory.meta.pokemonId);
+  }
+  
+  // Check for item collection on this page
+  if(currentStory.meta.collectibleItem&&currentStory.meta.itemPage===pageId){
+    collectItem(currentStory.meta.collectibleItem);
+  }
+  
   const choiceContainer=document.getElementById('choice-container');
   choiceContainer.innerHTML='';
   
@@ -467,7 +939,7 @@ function renderPage(pageId){
     const endBtn=document.createElement('button');
     endBtn.className='choice-btn end-btn';
     endBtn.textContent='📖 THE END';
-    endBtn.onclick=()=>showOakEnding();
+    endBtn.onclick=()=>showVocabQuiz();
     choiceDiv.appendChild(endBtn);
     choiceContainer.appendChild(choiceDiv);
   }else{
@@ -568,7 +1040,6 @@ function startParticles(scene){
   const canvas=document.getElementById('p-canvas');
   const pl=document.getElementById('p-left');
   
-  // Wait for element to be visible and have dimensions
   if(!canvas||!pl||!pl.offsetWidth||!pl.offsetHeight){
     setTimeout(()=>startParticles(scene),100);
     return;
@@ -578,24 +1049,54 @@ function startParticles(scene){
   canvas.width=pl.offsetWidth;canvas.height=pl.offsetHeight;
   const W=canvas.width,H=canvas.height;
   ctx.clearRect(0,0,W,H);let pts=[];
-  if(scene==='forest'||scene==='cherry'){
-    const col=scene==='cherry'?['#ffb7c5','#ff8fa3','#ffd4df']:['#4a8a20','#6aaa30','#88cc44'];
-    for(let i=0;i<26;i++)pts.push({x:Math.random()*W,y:Math.random()*H,sz:3+Math.random()*5,sp:.3+Math.random()*.5,dx:(Math.random()-.5)*.4,rot:Math.random()*Math.PI*2,rs:(Math.random()-.5)*.04,c:col[Math.floor(Math.random()*col.length)]});
+  
+  // Forest scenes - leaves
+  if(scene==='forest'||scene==='forest_deep'||scene==='forest_clearing'){
+    const col=['#4a8a20','#6aaa30','#88cc44'];
+    const count=scene==='forest_clearing'?35:26;
+    for(let i=0;i<count;i++)pts.push({x:Math.random()*W,y:Math.random()*H,sz:3+Math.random()*5,sp:.3+Math.random()*.5,dx:(Math.random()-.5)*.4,rot:Math.random()*Math.PI*2,rs:(Math.random()-.5)*.04,c:col[Math.floor(Math.random()*col.length)]});
     function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.globalAlpha=.75;ctx.beginPath();ctx.ellipse(0,0,p.sz,p.sz*.5,0,0,Math.PI*2);ctx.fill();ctx.restore();p.y+=p.sp;p.x+=p.dx;p.rot+=p.rs;if(p.y>H+10){p.y=-10;p.x=Math.random()*W;}});animId=requestAnimationFrame(draw);}draw();
-  }else if(scene==='snow'){
-    for(let i=0;i<55;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.5,sp:.4+Math.random()*.7,dx:(Math.random()-.5)*.3});
+  }
+  // Forest stream - water droplets
+  else if(scene==='forest_stream'){
+    for(let i=0;i<40;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:.8+Math.random()*1.5,sp:.5+Math.random()*.8,dx:(Math.random()-.5)*.2});
+    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.fillStyle='rgba(100,180,255,.6)';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.sp;p.x+=p.dx;if(p.y>H+5){p.y=-5;p.x=Math.random()*W;}});animId=requestAnimationFrame(draw);}draw();
+  }
+  // Cherry blossoms
+  else if(scene==='cherry'){
+    const col=['#ffb7c5','#ff8fa3','#ffd4df'];
+    for(let i=0;i<30;i++)pts.push({x:Math.random()*W,y:Math.random()*H,sz:3+Math.random()*5,sp:.3+Math.random()*.5,dx:(Math.random()-.5)*.4,rot:Math.random()*Math.PI*2,rs:(Math.random()-.5)*.04,c:col[Math.floor(Math.random()*col.length)]});
+    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.globalAlpha=.75;ctx.beginPath();ctx.ellipse(0,0,p.sz,p.sz*.5,0,0,Math.PI*2);ctx.fill();ctx.restore();p.y+=p.sp;p.x+=p.dx;p.rot+=p.rs;if(p.y>H+10){p.y=-10;p.x=Math.random()*W;}});animId=requestAnimationFrame(draw);}draw();
+  }
+  // Snow and mountain scenes
+  else if(scene==='snow'||scene==='mountain_peak'||scene==='mountain_ridge'||scene==='mountain_valley'){
+    const count=scene==='mountain_valley'?35:55;
+    for(let i=0;i<count;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2.5,sp:.4+Math.random()*.7,dx:(Math.random()-.5)*.3});
     function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.fillStyle='rgba(255,255,255,.72)';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.sp;p.x+=p.dx;if(p.y>H+5){p.y=-5;p.x=Math.random()*W;}});animId=requestAnimationFrame(draw);}draw();
-  }else if(scene==='volcano'){
+  }
+  // Volcano - embers
+  else if(scene==='volcano'){
     const iv=setInterval(()=>{pts.push({x:W*.5+(Math.random()-.5)*W*.15,y:H*.35,vx:(Math.random()-.5)*2.5,vy:-(2+Math.random()*3.5),r:2+Math.random()*3,life:1,c:['#ff8820','#ff4410','#ffcc30'][Math.floor(Math.random()*3)]});},90);
     cleanFn=()=>clearInterval(iv);
     function draw(){ctx.clearRect(0,0,W,H);pts=pts.filter(p=>p.life>0);pts.forEach(p=>{ctx.globalAlpha=p.life*.9;ctx.fillStyle=p.c;ctx.shadowBlur=8;ctx.shadowColor=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.x+=p.vx;p.y+=p.vy;p.vy+=.08;p.life-=.018;});ctx.globalAlpha=1;ctx.shadowBlur=0;animId=requestAnimationFrame(draw);}draw();
-  }else if(scene==='sunset'||scene==='cave'){
+  }
+  // Sunset - fireflies
+  else if(scene==='sunset'){
     for(let i=0;i<28;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2,vy:-(0.2+Math.random()*.4),vx:(Math.random()-.5)*.2,life:Math.random()});
-    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.globalAlpha=Math.sin(p.life*Math.PI)*.5;ctx.fillStyle=scene==='cave'?'#aa88ff':'#ffdd88';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.vy;p.x+=p.vx;p.life+=.004;if(p.life>1||p.y<-5){p.life=0;p.y=H;p.x=Math.random()*W;}});ctx.globalAlpha=1;animId=requestAnimationFrame(draw);}draw();
-  }else if(scene==='beach'){
+    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.globalAlpha=Math.sin(p.life*Math.PI)*.5;ctx.fillStyle='#ffdd88';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.vy;p.x+=p.vx;p.life+=.004;if(p.life>1||p.y<-5){p.life=0;p.y=H;p.x=Math.random()*W;}});ctx.globalAlpha=1;animId=requestAnimationFrame(draw);}draw();
+  }
+  // Cave - sparkles
+  else if(scene==='cave'){
+    for(let i=0;i<28;i++)pts.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2,vy:-(0.2+Math.random()*.4),vx:(Math.random()-.5)*.2,life:Math.random()});
+    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.globalAlpha=Math.sin(p.life*Math.PI)*.5;ctx.fillStyle='#aa88ff';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.vy;p.x+=p.vx;p.life+=.004;if(p.life>1||p.y<-5){p.life=0;p.y=H;p.x=Math.random()*W;}});ctx.globalAlpha=1;animId=requestAnimationFrame(draw);}draw();
+  }
+  // Beach - bubbles
+  else if(scene==='beach'){
     for(let i=0;i<20;i++)pts.push({x:Math.random()*W,y:.78*H+Math.random()*.15*H,r:1.5+Math.random()*3,vx:(Math.random()-.5)*.4,life:Math.random()});
     function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.globalAlpha=Math.sin(p.life*Math.PI)*.45;ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.stroke();p.x+=p.vx;p.life+=.007;if(p.life>1){p.life=0;p.x=Math.random()*W;}});ctx.globalAlpha=1;animId=requestAnimationFrame(draw);}draw();
-  }else{
+  }
+  // Default village - sparkles
+  else{
     for(let i=0;i<15;i++)pts.push({x:Math.random()*W,y:Math.random()*H*.8,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.3,r:1.5+Math.random()*2,life:Math.random()});
     function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.globalAlpha=Math.sin(p.life*Math.PI)*.55;ctx.fillStyle='#ffcc00';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.x+=p.vx;p.y+=p.vy;p.life+=.005;if(p.life>1){p.life=0;p.x=Math.random()*W;p.y=Math.random()*H*.8;}if(p.x<0)p.x=W;if(p.x>W)p.x=0;});ctx.globalAlpha=1;animId=requestAnimationFrame(draw);}draw();
   }
@@ -954,622 +1455,771 @@ function deleteStory(storyId){
 const DEFAULT_SIMPLE_EN={
   meta:{
     id:'default_simple_en',
-    title:'The Lost Berry Adventure',
+    title:'The Magic Forest Path',
     language:'en',
     author:'Built-in',
-    created:'2026-02-19',
+    created:'2026-02-20',
     ageRange:{min:5,max:6,tier:'simple'},
     genderSupport:{boy:true,girl:true},
-    pokemonFlexible:true,
-    requiredPokemon:[],
-    theme:'friendship',
+    theme:'adventure',
     mood:'cheerful',
     totalPages:12,
-    scenesUsed:['village','forest','cherry','beach','sunset']
+    scenesUsed:['village','forest','forest_clearing','forest_stream','sunset'],
+    vocabularyWord:'sparkle',
+    vocabularyContext:'The stones began to sparkle in the sunlight',
+    vocabularyDefinition:'To shine with small flashes of light',
+    vocabularyWrongAnswers:['To make a loud noise','To feel very cold'],
+    hasPokemon:true,
+    pokemonId:10,
+    pokemonPage:'butterfly_chase',
+    collectibleItem:'oran_berry',
+    itemPage:'flower_smell'
   },
   pages:{
-    // ACT 1: BEGINNING (Pages 1-4)
     start:{
       id:'start',
-      title:'A Big Day',
+      title:'A Sunny Morning',
       scene:'village',
-      text:'{{name}} woke up early. The sun was shining bright! "Today will be fun!" {{name}} said. {{pokemon}} jumped up and down. They were ready to play!',
+      text:'{{name}} woke up to a beautiful sunny day. "I want to explore!" {{he}} said. {{name}} put on {{his}} shoes and walked outside.',
       choices:[
-        {text:'Go to the forest',next:'forest_intro'},
-        {text:'Go to the park',next:'park_intro'},
-        {text:'Stay and play at home',next:'home_play'}
+        {text:'Go to the forest',next:'forest_path'},
+        {text:'Visit the garden',next:'garden_visit'}
       ]
     },
-    forest_intro:{
-      id:'forest_intro',
-      title:'Big Trees',
+    forest_path:{
+      id:'forest_path',
+      title:'The Forest Path',
       scene:'forest',
-      text:'{{name}} walked into the forest. The trees were so tall! {{pokemon}} ran ahead and found something. It was a berry! A big red berry.',
+      text:'{{name}} walked down a pretty forest path. Birds were singing in the trees. The leaves made nice shadows on the ground.',
       choices:[
-        {text:'Eat the berry',next:'eat_berry'},
-        {text:'Save it for later',next:'save_berry'}
+        {text:'Follow the birds',next:'bird_follow'},
+        {text:'Look at the flowers',next:'flower_stop'}
       ]
     },
-    park_intro:{
-      id:'park_intro',
-      title:'Pretty Park',
-      scene:'cherry',
-      text:'{{name}} went to the park. Pink flowers were everywhere! {{pokemon}} jumped in the flowers. Then {{he}} heard a sound. A little cry!',
+    garden_visit:{
+      id:'garden_visit',
+      title:'The Village Garden',
+      scene:'village_park',
+      text:'{{name}} went to the village garden. There were red flowers and yellow flowers. A butterfly flew past {{his}} nose!',
       choices:[
-        {text:'Look for the sound',next:'find_oddish'},
-        {text:'Keep playing',next:'play_more'}
+        {text:'Chase the butterfly',next:'butterfly_chase'},
+        {text:'Smell the flowers',next:'flower_smell'}
       ]
     },
-    home_play:{
-      id:'home_play',
-      title:'Home Fun',
-      scene:'village',
-      text:'{{name}} and {{pokemon}} played at home. They had toys and games. But then {{pokemon}} looked outside. {{He}} wanted to go out!',
-      choices:[
-        {text:'Go outside now',next:'forest_intro'},
-        {text:'Play one more game',next:'one_more_game'}
-      ]
-    },
-    eat_berry:{
-      id:'eat_berry',
-      title:'Yummy Berry',
+    bird_follow:{
+      id:'bird_follow',
+      title:'Singing Birds',
       scene:'forest',
-      text:'{{name}} ate the berry. It was so good! {{pokemon}} wanted one too. They looked around. No more berries here. They needed to find more!',
+      text:'{{name}} followed the birds. They led {{him}} to a clearing. In the middle was a big old tree. It had a hole in it!',
       choices:[
-        {text:'Search the forest',next:'search_forest'},
-        {text:'Go to the beach',next:'beach_trip'}
+        {text:'Look in the hole',next:'tree_hole'},
+        {text:'Climb the tree',next:'tree_climb'}
       ]
     },
-    save_berry:{
-      id:'save_berry',
-      title:'Good Idea',
+    flower_stop:{
+      id:'flower_stop',
+      title:'Pretty Flowers',
+      scene:'forest_clearing',
+      text:'{{name}} stopped to look at the flowers. They were purple and white. A rabbit hopped out from behind them!',
+      choices:[
+        {text:'Say hello to rabbit',next:'rabbit_friend'},
+        {text:'Pick some flowers',next:'pick_flowers'}
+      ]
+    },
+    butterfly_chase:{
+      id:'butterfly_chase',
+      title:'Flying High',
+      scene:'village_park',
+      text:'{{name}} chased the butterfly. It flew up and down! Then it landed on a special flower. The flower was bright blue!',
+      choices:[
+        {text:'Touch the flower',next:'magic_flower'},
+        {text:'Keep watching',next:'watch_butterfly'}
+      ]
+    },
+    flower_smell:{
+      id:'flower_smell',
+      title:'Sweet Smell',
+      scene:'village_park',
+      text:'{{name}} smelled the flowers. They smelled so sweet! Then {{he}} saw something shiny under a leaf. It was a pretty stone!',
+      choices:[
+        {text:'Pick up the stone',next:'find_stone'},
+        {text:'Leave it there',next:'leave_stone'}
+      ]
+    },
+    tree_hole:{
+      id:'tree_hole',
+      title:'A Surprise',
+      scene:'forest_clearing',
+      text:'{{name}} looked in the tree hole. Inside was a family of squirrels! They were eating acorns. Mama squirrel waved at {{name}}!',
+      choices:[
+        {text:'Wave back',next:'squirrel_friend'},
+        {text:'Give them space',next:'walk_stream'}
+      ]
+    },
+    tree_climb:{
+      id:'tree_climb',
+      title:'Up High',
       scene:'forest',
-      text:'{{name}} put the berry in {{his}} pocket. "We might need this!" {{name}} said. {{pokemon}} nodded. That was smart! Then they heard a cry.',
+      text:'{{name}} climbed up the tree. {{He}} could see very far! There was a stream with sparkly water nearby.',
       choices:[
-        {text:'Follow the sound',next:'find_oddish'},
-        {text:'Keep exploring',next:'search_forest'}
+        {text:'Go to the stream',next:'walk_stream'},
+        {text:'Stay in the tree',next:'tree_rest'}
       ]
     },
-    
-    // ACT 2: ADVENTURE (Pages 5-9)
-    find_oddish:{
-      id:'find_oddish',
-      title:'A New Friend',
+    rabbit_friend:{
+      id:'rabbit_friend',
+      title:'New Friend',
+      scene:'forest_clearing',
+      text:'The rabbit hopped closer. It had soft gray fur. {{name}} sat very still. The rabbit ate a carrot next to {{him}}!',
+      choices:[
+        {text:'Pet the rabbit',next:'gentle_pet'},
+        {text:'Walk to the stream',next:'walk_stream'}
+      ]
+    },
+    pick_flowers:{
+      id:'pick_flowers',
+      title:'A Bouquet',
+      scene:'forest_clearing',
+      text:'{{name}} picked some flowers. {{He}} made a pretty bouquet! It had five flowers in it. Time to head home and show everyone!',
+      choices:[]
+    },
+    magic_flower:{
+      id:'magic_flower',
+      title:'Something Special',
+      scene:'village_park',
+      text:'{{name}} touched the blue flower. It felt warm! Suddenly lots of butterflies came. They danced all around {{name}}!',
+      choices:[
+        {text:'Dance with them',next:'butterfly_dance'},
+        {text:'Stand very still',next:'butterfly_land'}
+      ]
+    },
+    watch_butterfly:{
+      id:'watch_butterfly',
+      title:'Beautiful Wings',
+      scene:'village_park',
+      text:'{{name}} watched the butterfly. Its wings had orange and black spots. After a minute, it flew away to the forest. What a nice day!',
+      choices:[]
+    },
+    find_stone:{
+      id:'find_stone',
+      title:'A Shiny Stone',
+      scene:'village_park',
+      text:'{{name}} picked up the stone. It was smooth and round. The stones began to sparkle in the sunlight! {{name}} put it in {{his}} pocket to keep forever.',
+      choices:[]
+    },
+    leave_stone:{
+      id:'leave_stone',
+      title:'A Good Choice',
+      scene:'village_park',
+      text:'{{name}} left the stone there. Maybe another kid would find it! {{He}} felt happy. Time to go home for lunch!',
+      choices:[]
+    },
+    squirrel_friend:{
+      id:'squirrel_friend',
+      title:'Happy Squirrels',
+      scene:'forest_clearing',
+      text:'{{name}} waved at the squirrels. They chittered happily! One baby squirrel peeked out and looked at {{name}}. So cute!',
+      choices:[
+        {text:'Say goodbye',next:'walk_home_forest'},
+        {text:'Watch them play',next:'watch_squirrels'}
+      ]
+    },
+    walk_stream:{
+      id:'walk_stream',
+      title:'The Pretty Stream',
+      scene:'forest_stream',
+      text:'{{name}} walked to the stream. The water was clear and cold. Little fish swam in it. {{name}} saw {{his}} reflection in the water!',
+      choices:[
+        {text:'Put feet in water',next:'wade_water'},
+        {text:'Follow stream home',next:'stream_home'}
+      ]
+    },
+    tree_rest:{
+      id:'tree_rest',
+      title:'High in the Tree',
       scene:'forest',
-      text:'{{name}} found a small Oddish! It looked sad. Its leaf was bent. "Oh no!" {{name}} said. {{pokemon}} looked worried too.',
+      text:'{{name}} stayed in the tree. The breeze felt nice. {{He}} could hear all the forest sounds. Birds, leaves, and water!',
       choices:[
-        {text:'Help the Oddish',next:'help_oddish'},
-        {text:'Find help',next:'get_help'},
-        {text:'Give it the berry',next:'give_berry'}
+        {text:'Climb down',next:'walk_home_forest'},
+        {text:'Rest a bit more',next:'tree_nap'}
       ]
     },
-    play_more:{
-      id:'play_more',
-      title:'More Playing',
-      scene:'cherry',
-      text:'{{name}} and {{pokemon}} kept playing. They chased butterflies. They smelled flowers. It was so nice! Then {{pokemon}} found a path.',
+    gentle_pet:{
+      id:'gentle_pet',
+      title:'Soft Fur',
+      scene:'forest_clearing',
+      text:'{{name}} gently pet the rabbit. Its fur was so soft! The rabbit closed its eyes. It liked {{name}} very much!',
       choices:[
-        {text:'Follow the path',next:'secret_garden_entrance'},
-        {text:'Stay in the park',next:'park_fun_continue'}
+        {text:'Stay with rabbit',next:'rabbit_play'},
+        {text:'Walk home',next:'walk_home_forest'}
       ]
     },
-    secret_garden_entrance:{
-      id:'secret_garden_entrance',
-      title:'Hidden Path',
-      scene:'cherry',
-      text:'The path was covered in flowers. {{pokemon}} walked ahead slowly. {{name}} followed. Where did this path go? It looked magical!',
-      choices:[
-        {text:'Keep following',next:'secret_path'}
-      ]
+    butterfly_dance:{
+      id:'butterfly_dance',
+      title:'A Magic Dance',
+      scene:'village_park',
+      text:'{{name}} danced with the butterflies! They flew in circles around {{him}}. It felt like magic! Then they all flew up into the sky.',
+      choices:[]
     },
-    park_fun_continue:{
-      id:'park_fun_continue',
-      title:'Happy Park Day',
-      scene:'cherry',
-      text:'{{name}} and {{pokemon}} played on the swings. They rolled down the hill. They laughed and laughed! The park was the best place ever.',
-      choices:[
-        {text:'Play more games',next:'park_fun'}
-      ]
+    butterfly_land:{
+      id:'butterfly_land',
+      title:'A Special Moment',
+      scene:'village_park',
+      text:'{{name}} stood very still. The butterflies landed on {{his}} arms and head! They tickled a little. After a minute, they flew away. Amazing!',
+      choices:[]
     },
-    one_more_game:{
-      id:'one_more_game',
-      title:'One More',
-      scene:'village',
-      text:'They played hide and seek. {{pokemon}} was good at hiding! {{name}} counted. "Ready or not!" Then {{name}} heard something outside.',
-      choices:[
-        {text:'Go check it out',next:'forest_intro'},
-        {text:'Finish the game',next:'park_intro'}
-      ]
+    watch_squirrels:{
+      id:'watch_squirrels',
+      title:'Playful Babies',
+      scene:'forest_clearing',
+      text:'{{name}} watched the baby squirrels play. They chased each other around the tree! One dropped an acorn on {{name}}`s head by mistake. {{name}} laughed!',
+      choices:[]
     },
-    search_forest:{
-      id:'search_forest',
-      title:'Looking Around',
+    wade_water:{
+      id:'wade_water',
+      title:'Cool Water',
+      scene:'forest_stream',
+      text:'{{name}} took off {{his}} shoes. {{He}} put {{his}} feet in the stream. The water was cool and felt good! Time to head home now.',
+      choices:[]
+    },
+    stream_home:{
+      id:'stream_home',
+      title:'The Way Home',
+      scene:'forest_stream',
+      text:'{{name}} followed the stream. It led back toward the village! The sun was starting to set. What a perfect adventure day!',
+      choices:[]
+    },
+    walk_home_forest:{
+      id:'walk_home_forest',
+      title:'Going Home',
+      scene:'sunset',
+      text:'{{name}} walked back home. The sky turned orange and pink. {{He}} had so many stories to tell! Tomorrow would be another fun day.',
+      choices:[]
+    },
+    tree_nap:{
+      id:'tree_nap',
+      title:'A Little Rest',
       scene:'forest',
-      text:'{{name}} and {{pokemon}} walked deeper. They saw birds and bugs. Then they heard a cry! Something needed help!',
-      choices:[
-        {text:'Go help',next:'find_oddish'},
-        {text:'Be careful',next:'careful_approach'}
-      ]
+      text:'{{name}} rested in the tree. {{He}} closed {{his}} eyes for just a minute. When {{he}} opened them, the sun was lower. Time to go home!',
+      choices:[]
     },
-    beach_trip:{
-      id:'beach_trip',
-      title:'To the Beach',
-      scene:'beach',
-      text:'They walked to the beach. The water was blue! {{pokemon}} played in the sand. Then they saw something shiny! What was it?',
-      choices:[
-        {text:'Dig it up',next:'digging_sand'},
-        {text:'Look at the water',next:'water_explore'}
-      ]
-    },
-    digging_sand:{
-      id:'digging_sand',
-      title:'Sand Discovery',
-      scene:'beach',
-      text:'{{name}} and {{pokemon}} dug in the sand together. They dug deeper and deeper. Sand flew everywhere! This was fun!',
-      choices:[
-        {text:'Keep digging',next:'find_shell'}
-      ]
-    },
-    water_explore:{
-      id:'water_explore',
-      title:'Ocean Waves',
-      scene:'beach',
-      text:'{{name}} walked to the water. The waves splashed! {{pokemon}} jumped in the water. It felt cool and nice. They played together.',
-      choices:[
-        {text:'Play more',next:'water_fun'}
-      ]
-    },
-    
-    // ACT 3: RESOLUTION (Pages 10-12)
-    help_oddish:{
-      id:'help_oddish',
-      title:'Being Kind',
-      scene:'forest',
-      text:'{{name}} carefully fixed the leaf. The Oddish smiled! It was happy now. {{pokemon}} and Oddish became friends. They all played together!',
-      choices:[
-        {text:'Play more',next:'ending_friends'},
-        {text:'Go home happy',next:'ending_home'}
-      ]
-    },
-    get_help:{
-      id:'get_help',
-      title:'Good Thinking',
-      scene:'village',
-      text:'{{name}} ran to get Mom. Mom knew what to do! They came back and helped Oddish. Everyone was happy!',
-      choices:[
-        {text:'Thank Mom',next:'ending_grateful'},
-        {text:'Play with Oddish',next:'ending_friends'}
-      ]
-    },
-    give_berry:{
-      id:'give_berry',
-      title:'Sharing is Caring',
-      scene:'forest',
-      text:'{{name}} gave Oddish the berry! Oddish ate it and felt better. Its leaf stood up! "You saved it!" {{pokemon}} was so proud.',
-      choices:[
-        {text:'Celebrate together',next:'ending_friends'}
-      ]
-    },
-    secret_path:{
-      id:'secret_path',
-      title:'A Secret Place',
-      scene:'cherry',
-      text:'The path led to a secret garden! Flowers everywhere! {{pokemon}} was amazed. This was the best day ever!',
-      choices:[
-        {text:'Pick flowers',next:'ending_flowers'}
-      ]
-    },
-    park_fun:{
-      id:'park_fun',
-      title:'Happy Playing',
-      scene:'cherry',
-      text:'{{name}} and {{pokemon}} played until sunset. They were tired but happy. Time to go home!',
-      choices:[
-        {text:'Go home',next:'ending_home'}
-      ]
-    },
-    careful_approach:{
-      id:'careful_approach',
-      title:'Careful Steps',
-      scene:'forest',
-      text:'{{name}} walked slowly. {{pokemon}} went first. They found the Oddish and helped it together. Teamwork!',
-      choices:[
-        {text:'Celebrate',next:'ending_friends'}
-      ]
-    },
-    find_shell:{
-      id:'find_shell',
-      title:'Pretty Shell',
-      scene:'beach',
-      text:'{{name}} found a beautiful shell! It sparkled in the sun. {{pokemon}} loved it. They kept it as a treasure!',
-      choices:[
-        {text:'Take it home',next:'ending_treasure'}
-      ]
-    },
-    water_fun:{
-      id:'water_fun',
-      title:'Beach Day',
-      scene:'beach',
-      text:'{{name}} and {{pokemon}} splashed in the water. They built sand castles. The ocean was warm and nice!',
-      choices:[
-        {text:'Stay and play',next:'ending_beach'}
-      ]
-    },
-    
-    // ENDINGS
-    ending_friends:{
-      id:'ending_friends',
+    rabbit_play:{
+      id:'rabbit_play',
       title:'Best Friends',
-      scene:'sunset',
-      text:'{{name}}, {{pokemon}}, and Oddish all played together. The sun went down. They were best friends now! "What a perfect day!" {{name}} smiled.',
-      choices:[]
-    },
-    ending_home:{
-      id:'ending_home',
-      title:'Home Sweet Home',
-      scene:'sunset',
-      text:'{{name}} and {{pokemon}} walked home. They were tired but happy. Mom had dinner ready. "Did you have fun?" she asked. "The best!" {{name}} said.',
-      choices:[]
-    },
-    ending_grateful:{
-      id:'ending_grateful',
-      title:'Thank You',
-      scene:'village',
-      text:'{{name}} hugged Mom. "Thank you for helping!" Mom smiled. "You were very kind to help Oddish." {{name}} felt proud. {{pokemon}} did too!',
-      choices:[]
-    },
-    ending_flowers:{
-      id:'ending_flowers',
-      title:'Flower Crown',
-      scene:'cherry',
-      text:'{{name}} made a flower crown! {{pokemon}} wore it proudly. They danced in the secret garden until the sun set. Magic!',
-      choices:[]
-    },
-    ending_treasure:{
-      id:'ending_treasure',
-      title:'Special Treasure',
-      scene:'sunset',
-      text:'{{name}} put the shell on {{his}} shelf at home. It would remind {{him}} of this special day. {{pokemon}} nuzzled {{his}} hand. Best friends forever!',
-      choices:[]
-    },
-    ending_beach:{
-      id:'ending_beach',
-      title:'Perfect Beach Day',
-      scene:'beach',
-      text:'As the sun set over the ocean, {{name}} and {{pokemon}} sat on the sand. The sky was pink and orange. "This was the best day ever!" {{name}} whispered.',
+      scene:'forest_clearing',
+      text:'{{name}} and the rabbit played together. They hopped around the clearing! The rabbit showed {{name}} where it lived. What a good friend!',
       choices:[]
     }
   },
   startPage:'start'
 };
+
 
 const DEFAULT_MEDIUM_EN={
   meta:{
     id:'default_medium_en',
-    title:'The Crystal Cave Mystery',
+    title:'The Mountain Treasure Hunt',
     language:'en',
     author:'Built-in',
-    created:'2026-02-19',
+    created:'2026-02-20',
     ageRange:{min:7,max:10,tier:'medium'},
     genderSupport:{boy:true,girl:true},
-    pokemonFlexible:true,
-    requiredPokemon:[],
-    theme:'mystery',
+    theme:'adventure',
     mood:'exciting',
     totalPages:14,
-    scenesUsed:['village','forest','cave','beach','volcano','sunset']
+    scenesUsed:['village','mountain_valley','mountain_ridge','mountain_peak','forest','sunset'],
+    vocabularyWord:'summit',
+    vocabularyContext:'They finally reached the summit of the mountain',
+    vocabularyDefinition:'The highest point of a mountain',
+    vocabularyWrongAnswers:['The bottom of a valley','A type of climbing rope'],
+    hasPokemon:true,
+    pokemonId:74,
+    pokemonPage:'ledge_climb',
+    collectibleItem:'fresh_water',
+    itemPage:'river_path'
   },
   pages:{
-    // ACT 1: BEGINNING (Pages 1-4)
     start:{
       id:'start',
-      title:'A Strange Discovery',
+      title:'The Mysterious Map',
       scene:'village',
-      text:'{{name}} found an old map in the attic while cleaning. It showed a mysterious path through the forest, leading to something marked with a glowing star symbol. {{pokemon}} peered at the map curiously, tail wagging with excitement. This could be a real adventure!',
+      text:'{{name}} found an old map in {{his}} attic. It showed mountains with an X marking a secret location. "I wonder what treasure is up there!" {{he}} thought excitedly.',
       choices:[
-        {text:'Follow the map immediately',next:'eager_start'},
-        {text:'Ask Mom about it first',next:'ask_mom'},
-        {text:'Study the map carefully',next:'study_map'}
+        {text:'Start the journey today',next:'prepare_journey'},
+        {text:'Ask for advice first',next:'seek_advice'}
       ]
     },
-    eager_start:{
-      id:'eager_start',
-      title:'Into Adventure',
-      scene:'forest',
-      text:'{{name}} and {{pokemon}} rushed into the forest with the map. The path was overgrown but the map showed the way clearly. After a while, they reached a fork in the path. The map showed both routes, but one was marked with a warning symbol.',
-      choices:[
-        {text:'Take the safe path',next:'safe_forest_path'},
-        {text:'Take the marked path',next:'warning_path'},
-        {text:'Climb a tree to look around',next:'tree_view'}
-      ]
-    },
-    ask_mom:{
-      id:'ask_mom',
-      title:"Mom's Story",
+    prepare_journey:{
+      id:'prepare_journey',
+      title:'Getting Ready',
       scene:'village',
-      text:'Mom examined the map with surprise. "I remember this! Your grandfather used to talk about Crystal Cave - a place where rare crystals grow. He said it was beautiful but had challenges to reach it." She smiled warmly. "If you\'re going, take supplies and be careful!"',
+      text:'{{name}} packed a backpack with water, snacks, and a compass. {{He}} put on sturdy hiking boots and grabbed the map. Time to find that treasure!',
       choices:[
-        {text:'Pack supplies carefully',next:'pack_supplies'},
-        {text:'Ask more questions',next:'learn_more'},
-        {text:'Head out right away',next:'eager_start'}
+        {text:'Take the valley path',next:'valley_start'},
+        {text:'Head straight uphill',next:'steep_climb'}
       ]
     },
-    study_map:{
-      id:'study_map',
-      title:'Map Secrets',
-      scene:'village',
-      text:'{{name}} noticed the map had more details than {{he}} first thought. There were three different symbols: a cave, a tree, and waves. Each seemed to mark a different route to the star location. {{pokemon}} pointed with {{his}} paw at the cave symbol.',
-      choices:[
-        {text:'Follow the cave route',next:'prepare_cave_journey'},
-        {text:'Follow the tree route',next:'prepare_tree_journey'},
-        {text:'Follow the wave route',next:'prepare_beach_journey'}
-      ]
-    },
-    prepare_cave_journey:{
-      id:'prepare_cave_journey',
-      title:'Cave Preparation',
-      scene:'village',
-      text:'{{name}} decided to prepare for the cave journey. {{He}} packed a flashlight and warm jacket. Mom gave {{him}} a sandwich. "Caves can be dark and cold," she said. {{pokemon}} looked ready!',
-      choices:[
-        {text:'Head to the cave',next:'cave_route'}
-      ]
-    },
-    prepare_tree_journey:{
-      id:'prepare_tree_journey',
-      title:'Tree Path Ready',
-      scene:'village',
-      text:'{{name}} got ready for the tree path. {{He}} packed rope and climbing gloves. {{pokemon}} practiced jumping. They were ready for an adventure in the trees!',
-      choices:[
-        {text:'Start the journey',next:'tree_route'}
-      ]
-    },
-    prepare_beach_journey:{
-      id:'prepare_beach_journey',
-      title:'Beach Route Ready',
-      scene:'village',
-      text:'{{name}} prepared for the beach route. {{He}} packed towels and sunscreen. {{pokemon}} seemed excited about the water! They set off toward the coast together.',
-      choices:[
-        {text:'Go to the beach',next:'beach_route'}
-      ]
-    },
-    
-    // ACT 2: JOURNEY (Pages 5-10)
-    pack_supplies:{
-      id:'pack_supplies',
-      title:'Well Prepared',
-      scene:'village',
-      text:'{{name}} packed a backpack with water, snacks, a flashlight, and rope. {{pokemon}} helped carry a smaller bag. Mom gave them sandwiches for the journey. "Being prepared makes adventures safer and more fun!" she said.',
-      choices:[
-        {text:'Take the forest path',next:'safe_forest_path'},
-        {text:'Check the map again',next:'study_map'}
-      ]
-    },
-    learn_more:{
-      id:'learn_more',
-      title:'Grandfather\'s Tale',
-      scene:'village',
-      text:'Mom told {{name}} that Grandfather found a beautiful crystal in the cave years ago. It glowed with inner light. "He left it there for others to discover," Mom said. "The journey itself was his real treasure - the friends he made along the way."',
-      choices:[
-        {text:'Feel inspired, head out',next:'eager_start'},
-        {text:'Pack supplies first',next:'pack_supplies'}
-      ]
-    },
-    safe_forest_path:{
-      id:'safe_forest_path',
-      title:'The Gentle Path',
-      scene:'forest',
-      text:'The safe path wound through beautiful parts of the forest. {{name}} and {{pokemon}} saw colorful birds and friendly Bug Pokémon. They came to a clearing where an old man sat resting. "Hello, young traveler!" he greeted them warmly.',
-      choices:[
-        {text:'Ask about the cave',next:'old_man_helps'},
-        {text:'Share your snacks',next:'make_friend'},
-        {text:'Keep going',next:'forest_deeper'}
-      ]
-    },
-    warning_path:{
-      id:'warning_path',
-      title:'The Challenging Route',
-      scene:'forest',
-      text:'This path was more difficult with thick vines and fallen logs. But {{pokemon}} was excited by the challenge! They worked together, climbing and pushing through. {{pokemon}} seemed to grow more confident with each obstacle.',
-      choices:[
-        {text:'Continue bravely',next:'forest_deeper'},
-        {text:'Rest and plan',next:'rest_planning'}
-      ]
-    },
-    tree_view:{
-      id:'tree_view',
-      title:'A View From Above',
-      scene:'forest',
-      text:'{{name}} and {{pokemon}} climbed a tall tree. From up high, they could see the whole forest! In the distance, they spotted a cave entrance glowing faintly blue. They also saw smoke rising from another direction.',
-      choices:[
-        {text:'Head toward the glowing cave',next:'cave_route'},
-        {text:'Investigate the smoke',next:'volcano_path'},
-        {text:'Climb down and continue',next:'forest_deeper'}
-      ]
-    },
-    cave_route:{
-      id:'cave_route',
-      title:'Cave Entrance',
-      scene:'cave',
-      text:'{{name}} found the cave entrance. Inside, it was cool and quiet. Strange blue crystals grew on the walls, providing a soft light. {{pokemon}} stayed close as they ventured deeper. The crystals seemed to hum quietly.',
-      choices:[
-        {text:'Touch a crystal',next:'crystal_touch_moment'},
-        {text:'Follow the humming sound',next:'deeper_into_cave'},
-        {text:'Look for another path',next:'cave_fork'}
-      ]
-    },
-    crystal_touch_moment:{
-      id:'crystal_touch_moment',
-      title:'Crystal Glow',
-      scene:'cave',
-      text:'{{name}} gently touched a blue crystal. It glowed brighter! {{pokemon}} was amazed. The crystal felt warm and friendly. More crystals ahead glowed in response.',
-      choices:[
-        {text:'Go deeper',next:'crystal_reaction'}
-      ]
-    },
-    deeper_into_cave:{
-      id:'deeper_into_cave',
-      title:'Following the Sound',
-      scene:'cave',
-      text:'The humming grew louder as they went deeper. {{pokemon}} led the way carefully. The path twisted and turned. They were getting close to something special!',
-      choices:[
-        {text:'Keep following',next:'crystal_chamber'}
-      ]
-    },
-    tree_route:{
-      id:'tree_route',
-      title:'Through the Canopy',
-      scene:'cherry',
-      text:'Following tree symbols, {{name}} found a path through cherry blossom trees. Petals fell like pink snow. Hidden in the trees were wooden platforms - someone had built a tree path! It led toward the mountainside.',
-      choices:[
-        {text:'Follow the tree path',next:'tree_platforms'},
-        {text:'Climb down to explore',next:'forest_deeper'}
-      ]
-    },
-    beach_route:{
-      id:'beach_route',
-      title:'Coastal Discovery',
-      scene:'beach',
-      text:'The wave symbols led to a beautiful beach. {{pokemon}} played in the waves while {{name}} explored. Behind some rocks, {{he}} found a narrow path leading upward along the cliff face.',
-      choices:[
-        {text:'Take the cliff path',next:'cliff_climb'},
-        {text:'Search the beach more',next:'beach_exploration'}
-      ]
-    },
-    
-    // ACT 2 CONTINUED (Pages 11-12)
-    old_man_helps:{
-      id:'old_man_helps',
+    seek_advice:{
+      id:'seek_advice',
       title:'Wise Words',
+      scene:'village',
+      text:'{{name}} showed the map to an old mountaineer. "Ah, I know this place!" she said. "The journey is challenging, but the view is worth it. Take the valley path - it`s safer."',
+      choices:[
+        {text:'Follow her advice',next:'valley_start'},
+        {text:'Try the quick route',next:'steep_climb'}
+      ]
+    },
+    valley_start:{
+      id:'valley_start',
+      title:'The Valley Path',
+      scene:'mountain_valley',
+      text:'{{name}} entered a beautiful valley surrounded by tall peaks. A clear river ran through it, and wildflowers grew everywhere. The path split into two directions.',
+      choices:[
+        {text:'Follow the river',next:'river_path'},
+        {text:'Take the forest trail',next:'forest_path'}
+      ]
+    },
+    steep_climb:{
+      id:'steep_climb',
+      title:'A Tough Choice',
+      scene:'mountain_ridge',
+      text:'{{name}} tried climbing straight up, but the rocks were slippery and steep. After a few scary moments, {{he}} decided this was too dangerous. Time to find another way.',
+      choices:[
+        {text:'Go back to valley',next:'valley_start'}
+      ]
+    },
+    river_path:{
+      id:'river_path',
+      title:'Following the Water',
+      scene:'mountain_valley',
+      text:'{{name}} walked beside the sparkling river. The sound of water was peaceful. Suddenly, {{he}} spotted something shiny caught between rocks - a small golden key!',
+      choices:[
+        {text:'Take the key',next:'get_key'},
+        {text:'Leave it there',next:'continue_upstream'}
+      ]
+    },
+    forest_path:{
+      id:'forest_path',
+      title:'Into the Woods',
       scene:'forest',
-      text:'The old man smiled. "Ah, seeking Crystal Cave! The crystals there reflect your heart. A kind person sees beauty, a brave person sees strength." He pointed to a hidden shortcut. "This way is faster."',
+      text:'{{name}} entered a thick forest at the mountain`s base. Sunlight filtered through leaves, creating beautiful patterns. {{He}} noticed claw marks on a tree pointing upward.',
       choices:[
-        {text:'Thank him and take shortcut',next:'crystal_chamber'},
-        {text:'Stay and talk more',next:'make_friend'}
+        {text:'Follow the marks',next:'marking_trail'},
+        {text:'Find another path',next:'alternate_route'}
       ]
     },
-    make_friend:{
-      id:'make_friend',
-      title:'New Friend',
+    get_key:{
+      id:'get_key',
+      title:'A Lucky Find',
+      scene:'mountain_valley',
+      text:'{{name}} carefully picked up the golden key. It felt warm in {{his}} hand. {{He}} put it in {{his}} pocket, wondering what it might unlock later.',
+      choices:[
+        {text:'Keep going upstream',next:'continue_upstream'}
+      ]
+    },
+    continue_upstream:{
+      id:'continue_upstream',
+      title:'Higher Ground',
+      scene:'mountain_ridge',
+      text:'{{name}} followed the river to its source - a waterfall! Behind it, {{he}} saw a narrow ledge leading up the mountain. The path was getting steeper.',
+      choices:[
+        {text:'Climb the ledge',next:'ledge_climb'},
+        {text:'Look for easier route',next:'easier_path'}
+      ]
+    },
+    marking_trail:{
+      id:'marking_trail',
+      title:'Ancient Markings',
       scene:'forest',
-      text:'{{name}} shared the sandwiches with the old man. They talked about adventures and Pokémon. He was actually a famous explorer! "Your kindness reminds me why I loved exploring," he said, giving {{name}} a special stone. "This will light your way in the cave."',
+      text:'{{name}} followed the claw marks from tree to tree. They led to a hidden cave entrance! Inside, {{he}} could hear the echo of dripping water.',
       choices:[
-        {text:'Continue to cave with gift',next:'crystal_chamber'}
+        {text:'Enter the cave',next:'cave_passage'},
+        {text:'Go around it',next:'around_cave'}
       ]
     },
-    forest_deeper:{
-      id:'forest_deeper',
-      title:'Deeper Woods',
+    alternate_route:{
+      id:'alternate_route',
+      title:'The Winding Trail',
       scene:'forest',
-      text:'The forest grew denser. {{pokemon}} found tracks - someone else had been here recently. Following the tracks, they discovered the cave entrance was near!',
+      text:'{{name}} found a gentler trail winding up through the forest. It took longer, but it was safer. Eventually, {{he}} emerged above the tree line.',
       choices:[
-        {text:'Enter the cave',next:'cave_route'},
-        {text:'Look around more',next:'rest_planning'}
+        {text:'Continue upward',next:'above_treeline'}
       ]
     },
-    rest_planning:{
-      id:'rest_planning',
-      title:'Strategic Rest',
-      scene:'forest',
-      text:'{{name}} and {{pokemon}} sat down to rest and plan. Looking at the map together, they noticed a detail they\'d missed - a small star near the cave entrance. It seemed to indicate something special.',
+    ledge_climb:{
+      id:'ledge_climb',
+      title:'Careful Steps',
+      scene:'mountain_ridge',
+      text:'{{name}} carefully climbed the narrow ledge. {{He}} had to focus on every step. Finally, {{he}} pulled {{himself}} up onto a wide ridge with an amazing view!',
       choices:[
-        {text:'Head to cave entrance',next:'cave_route'},
-        {text:'Search for the small star',next:'find_marker'}
+        {text:'Rest and look around',next:'ridge_rest'},
+        {text:'Keep climbing',next:'final_ascent'}
       ]
     },
-    volcano_path:{
-      id:'volcano_path',
-      title:'Volcanic Trail',
-      scene:'volcano',
-      text:'The smoke led to an old volcanic area. The ground was warm! {{pokemon}} seemed nervous but {{name}} noticed the path was safe - just warm rocks. Beyond it, they could see the cave entrance.',
+    easier_path:{
+      id:'easier_path',
+      title:'Smart Decision',
+      scene:'mountain_ridge',
+      text:'{{name}} found switchback trails that zigzagged up the mountain. It took longer, but it was much safer. Soon {{he}} reached the same ridge as the other path.',
       choices:[
-        {text:'Cross carefully',next:'crystal_chamber'},
-        {text:'Find another way',next:'cave_route'}
+        {text:'Take a break',next:'ridge_rest'},
+        {text:'Push to the top',next:'final_ascent'}
       ]
     },
-    
-    // ACT 3: DISCOVERY & RESOLUTION (Pages 13-14)
-    crystal_reaction:{
-      id:'crystal_reaction',
-      title:'Crystal Magic',
+    cave_passage:{
+      id:'cave_passage',
+      title:'Through the Mountain',
       scene:'cave',
-      text:'When {{name}} touched the crystal, it glowed brighter! {{pokemon}} touched one too, and suddenly the cave filled with gentle rainbow light. The crystals were reacting to their friendship!',
+      text:'{{name}} walked through the cave. {{His}} footsteps echoed. Small crystals in the walls caught the light from {{his}} flashlight. The cave led up through the mountain!',
       choices:[
-        {text:'Explore the glowing chamber',next:'ending_discovery'}
+        {text:'Exit the cave',next:'cave_exit'}
       ]
     },
-    crystal_chamber:{
-      id:'crystal_chamber',
-      title:'The Crystal Heart',
-      scene:'cave',
-      text:'Following the humming sound, {{name}} and {{pokemon}} found a huge chamber. In the center stood the largest crystal they\'d ever seen, glowing with soft blue and pink light. This was it - the treasure marked on the map!',
+    around_cave:{
+      id:'around_cave',
+      title:'The Outer Path',
+      scene:'mountain_ridge',
+      text:'{{name}} walked around the cave, following a rocky trail. It was steeper than expected, but soon {{he}} was high on the mountain with clouds below!',
       choices:[
-        {text:'Admire the crystal',next:'ending_discovery'},
-        {text:'Touch it gently',next:'ending_magic'}
+        {text:'Continue to peak',next:'above_treeline'}
       ]
     },
-    cave_fork:{
-      id:'cave_fork',
-      title:'Two Paths',
-      scene:'cave',
-      text:'The cave split into two passages. One glowed blue, the other sparkled. {{pokemon}} seemed drawn to the sparkling path.',
+    above_treeline:{
+      id:'above_treeline',
+      title:'Above the Trees',
+      scene:'mountain_ridge',
+      text:'{{name}} climbed above the treeline. The air was thinner here. Only grass and rocks remained. {{He}} could see the summit ahead - not far now!',
       choices:[
-        {text:'Trust {{pokemon}}\'s instinct',next:'crystal_chamber'},
-        {text:'Take the blue path',next:'crystal_reaction'}
+        {text:'Make final climb',next:'final_ascent'}
       ]
     },
-    tree_platforms:{
-      id:'tree_platforms',
-      title:'Ancient Tree Path',
-      scene:'cherry',
-      text:'The platforms led higher and higher through the trees. From the highest platform, {{name}} could see directly into the cave through a natural opening above! A rope ladder led down.',
+    ridge_rest:{
+      id:'ridge_rest',
+      title:'A Moment to Breathe',
+      scene:'mountain_ridge',
+      text:'{{name}} sat on the ridge, catching {{his}} breath. The view was incredible! {{He}} could see the village far below and clouds drifting past. Then {{he}} spotted the summit above.',
       choices:[
-        {text:'Take the secret entrance',next:'crystal_chamber'}
+        {text:'Go to the summit',next:'final_ascent'}
       ]
     },
-    cliff_climb:{
-      id:'cliff_climb',
-      title:'Brave Ascent',
-      scene:'beach',
-      text:'{{name}} and {{pokemon}} carefully climbed the cliff path. It was challenging but the view was incredible! At the top, they found the cave entrance hidden behind a waterfall.',
+    cave_exit:{
+      id:'cave_exit',
+      title:'Emerging Into Light',
+      scene:'mountain_peak',
+      text:'{{name}} emerged from the cave near the summit! The secret passage had led almost to the top. {{He}} just had to climb a few more steps.',
       choices:[
-        {text:'Enter through waterfall',next:'crystal_chamber'}
+        {text:'Reach the summit',next:'summit_arrival'}
       ]
     },
-    beach_exploration:{
-      id:'beach_exploration',
-      title:'Tide Pool Discovery',
-      scene:'beach',
-      text:'Exploring the beach, {{name}} found beautiful tide pools with small Water Pokémon. One pool had a carved stone showing the way to the cave. They followed the clues inland.',
+    final_ascent:{
+      id:'final_ascent',
+      title:'One Last Push',
+      scene:'mountain_peak',
+      text:'{{name}} climbed the final slope. {{His}} legs were tired, but {{he}} kept going. Step by step, {{he}} got closer to the top. Almost there!',
       choices:[
-        {text:'Follow the clues',next:'cave_route'}
+        {text:'Reach the peak',next:'summit_arrival'}
       ]
     },
-    find_marker:{
-      id:'find_marker',
-      title:'The Hidden Marker',
-      scene:'forest',
-      text:'{{name}} found a small star carved into a tree! Below it was a message: "The true treasure is the journey and who you share it with." {{pokemon}} nuzzled {{name}}\'s hand.',
+    summit_arrival:{
+      id:'summit_arrival',
+      title:'The Summit',
+      scene:'mountain_peak',
+      text:'{{name}} finally reached the summit of the mountain! They stood at the highest point, with the whole world spread below. The view was absolutely breathtaking.',
       choices:[
-        {text:'Continue to the cave',next:'crystal_chamber'}
+        {text:'Look for the treasure',next:'find_treasure'},
+        {text:'Enjoy the view first',next:'summit_view'}
       ]
     },
-    
-    // ENDINGS
-    ending_discovery:{
-      id:'ending_discovery',
-      title:'True Treasure Found',
-      scene:'sunset',
-      text:'{{name}} and {{pokemon}} sat in the crystal chamber as sunset light filtered through cracks above, making the crystals dance with color. They realized Grandfather was right - the real treasure wasn\'t the crystals, but the adventure they\'d shared together. Their bond had grown stronger with every choice they made.',
+    find_treasure:{
+      id:'find_treasure',
+      title:'The Treasure Revealed',
+      scene:'mountain_peak',
+      text:'{{name}} checked the map and looked around the summit. There, under a pile of rocks, {{he}} found it - a small box. Inside was a golden compass and a note: "The real treasure is reaching your goals."',
       choices:[]
     },
-    ending_magic:{
-      id:'ending_magic',
-      title:'Crystal\'s Gift',
-      scene:'cave',
-      text:'When {{name}} touched the great crystal, it pulsed with warm light. Images appeared showing all the moments of their journey - every choice, every challenge overcome together. The crystal was showing them their own story! {{pokemon}} and {{name}} hugged, understanding now that their friendship was the greatest treasure of all.',
+    summit_view:{
+      id:'summit_view',
+      title:'Worth Every Step',
+      scene:'sunset',
+      text:'{{name}} stood at the summit as the sun began to set. The sky turned orange and pink. {{He}} realized the journey itself was the real treasure - the challenges, the choices, and the amazing views. {{He}} felt proud.',
       choices:[]
     }
   },
   startPage:'start'
 };
 
+const DEFAULT_HARD_EN={
+  meta:{
+    id:'default_hard_en',
+    title:'The Mysterious Island',
+    language:'en',
+    author:'Built-in',
+    created:'2026-02-20',
+    ageRange:{min:11,max:14,tier:'advanced'},
+    genderSupport:{boy:true,girl:true},
+    theme:'mystery',
+    mood:'suspenseful',
+    totalPages:16,
+    scenesUsed:['beach','forest','cave','volcano','sunset'],
+    vocabularyWord:'phenomenon',
+    vocabularyContext:'This strange phenomenon had never been documented before',
+    vocabularyDefinition:'A fact or event that is observed to exist or happen',
+    vocabularyWrongAnswers:['A type of ancient building','A supernatural creature'],
+    hasPokemon:true,
+    pokemonId:54,
+    pokemonPage:'stream_discovery',
+    collectibleItem:'stardust',
+    itemPage:'cave_entrance'
+  },
+  pages:{
+    start:{
+      id:'start',
+      title:'The Storm',
+      scene:'beach',
+      text:'{{name}} woke up on a sandy beach, disoriented. The last thing {{he}} remembered was the storm that caught {{his}} boat. Looking around, {{he}} saw an island covered in dense jungle. Where was everyone else?',
+      choices:[
+        {text:'Explore the beach',next:'beach_search'},
+        {text:'Head into the jungle',next:'jungle_entry'}
+      ]
+    },
+    beach_search:{
+      id:'beach_search',
+      title:'Scattered Debris',
+      scene:'beach',
+      text:'{{name}} walked along the beach, finding pieces of the wrecked boat scattered across the sand. Among the debris, {{he}} discovered a waterproof emergency kit with a flare gun, matches, and a knife.',
+      choices:[
+        {text:'Take the supplies',next:'get_supplies'},
+        {text:'Search for survivors',next:'search_survivors'}
+      ]
+    },
+    jungle_entry:{
+      id:'jungle_entry',
+      title:'Into Unknown Territory',
+      scene:'forest',
+      text:'{{name}} pushed through thick vines and entered the jungle. Strange bird calls echoed through the trees. {{He}} noticed something odd - the plants here looked ancient, almost prehistoric.',
+      choices:[
+        {text:'Follow a stream',next:'stream_discovery'},
+        {text:'Climb a tall tree',next:'tree_view'}
+      ]
+    },
+    get_supplies:{
+      id:'get_supplies',
+      title:'Essential Resources',
+      scene:'beach',
+      text:'{{name}} packed the supplies carefully. The flare gun could signal rescuers, but {{he}} only had three flares. {{He}} needed to choose when to use them wisely.',
+      choices:[
+        {text:'Signal immediately',next:'early_signal'},
+        {text:'Explore first',next:'explore_island'}
+      ]
+    },
+    search_survivors:{
+      id:'search_survivors',
+      title:'Disturbing Signs',
+      scene:'beach',
+      text:'{{name}} searched for other survivors but found only tracks leading into the jungle. They were fresh - someone else was here! But the tracks looked strange, almost deliberate, as if leading {{him}} somewhere.',
+      choices:[
+        {text:'Follow the tracks',next:'track_follow'},
+        {text:'Stay on the beach',next:'beach_camp'}
+      ]
+    },
+    stream_discovery:{
+      id:'stream_discovery',
+      title:'Fresh Water',
+      scene:'forest',
+      text:'{{name}} found a clear stream flowing through the jungle. Following it upstream, {{he}} discovered it emerged from a cave entrance. Water echoed from deep within.',
+      choices:[
+        {text:'Enter the cave',next:'cave_entrance'},
+        {text:'Continue along stream',next:'stream_path'}
+      ]
+    },
+    tree_view:{
+      id:'tree_view',
+      title:'A Higher Perspective',
+      scene:'forest',
+      text:'{{name}} climbed to the top of a massive tree. From this vantage point, {{he}} could see the entire island. In the center was what looked like an active volcano, and on the opposite side, some kind of structure!',
+      choices:[
+        {text:'Head toward structure',next:'structure_approach'},
+        {text:'Investigate volcano',next:'volcano_trek'}
+      ]
+    },
+    early_signal:{
+      id:'early_signal',
+      title:'A Risky Choice',
+      scene:'beach',
+      text:'{{name}} fired a flare into the sky. It arced beautifully but attracted something unexpected - movement in the jungle. Something large was coming toward the beach.',
+      choices:[
+        {text:'Hide quickly',next:'hide_beach'},
+        {text:'Stand ground',next:'face_unknown'}
+      ]
+    },
+    explore_island:{
+      id:'explore_island',
+      title:'Careful Investigation',
+      scene:'beach',
+      text:'{{name}} decided to explore before signaling. {{He}} needed to understand this place. Walking along the shore, {{he}} found footprints that weren`t {{his}} own - and they were recent.',
+      choices:[
+        {text:'Follow footprints',next:'track_follow'},
+        {text:'Go inland',next:'inland_path'}
+      ]
+    },
+    track_follow:{
+      id:'track_follow',
+      title:'The Trail Deepens',
+      scene:'forest',
+      text:'{{name}} followed the tracks into the jungle. They led to a clearing where someone had made camp recently. There was a journal with strange notes about "temporal anomalies" and "the island`s secret."',
+      choices:[
+        {text:'Read the journal',next:'journal_discovery'},
+        {text:'Keep following tracks',next:'deeper_jungle'}
+      ]
+    },
+    beach_camp:{
+      id:'beach_camp',
+      title:'Establishing Base',
+      scene:'beach',
+      text:'{{name}} decided to make camp on the beach where rescuers could easily spot {{him}}. But as night fell, {{he}} saw lights moving in the jungle - not flashlights, but something that glowed naturally.',
+      choices:[
+        {text:'Investigate lights',next:'night_investigation'},
+        {text:'Stay safe at camp',next:'camp_night'}
+      ]
+    },
+    cave_entrance:{
+      id:'cave_entrance',
+      title:'Echoing Darkness',
+      scene:'cave',
+      text:'{{name}} entered the cave. As {{his}} eyes adjusted, {{he}} saw the walls were covered in ancient carvings showing people arriving on the island and never leaving. This strange phenomenon had never been documented before.',
+      choices:[
+        {text:'Go deeper',next:'cave_depths'},
+        {text:'Turn back',next:'exit_cave'}
+      ]
+    },
+    stream_path:{
+      id:'stream_path',
+      title:'Following the Flow',
+      scene:'forest',
+      text:'{{name}} followed the stream through the jungle. It led to a lagoon with crystal-clear water. At the bottom, {{he}} could see what looked like metal - possibly from other shipwrecks.',
+      choices:[
+        {text:'Dive to investigate',next:'underwater_discovery'},
+        {text:'Continue exploring',next:'lagoon_path'}
+      ]
+    },
+    structure_approach:{
+      id:'structure_approach',
+      title:'Remnants of Civilization',
+      scene:'forest',
+      text:'{{name}} pushed through the jungle toward the structure. It turned out to be ruins of an old research station, abandoned but not ancient. Equipment still hummed with power from solar panels.',
+      choices:[
+        {text:'Search the station',next:'station_search'},
+        {text:'Check computers',next:'data_discovery'}
+      ]
+    },
+    volcano_trek:{
+      id:'volcano_trek',
+      title:'Heat Rising',
+      scene:'volcano',
+      text:'{{name}} approached the volcano. The heat was intense, but {{he}} noticed something - vents releasing gas that made {{him}} feel strange, disoriented. {{He}} backed away quickly.',
+      choices:[
+        {text:'Retreat to jungle',next:'jungle_return'},
+        {text:'Circle the volcano',next:'volcano_circle'}
+      ]
+    },
+    hide_beach:{
+      id:'hide_beach',
+      title:'Concealment',
+      scene:'beach',
+      text:'{{name}} hid behind rocks as something massive moved through the jungle edge. It wasn`t an animal - it was a person! An old survivor wearing tattered clothes emerged, looking confused.',
+      choices:[
+        {text:'Call out to them',next:'survivor_contact'},
+        {text:'Stay hidden',next:'observe_survivor'}
+      ]
+    },
+    face_unknown:{
+      id:'face_unknown',
+      title:'Confrontation',
+      scene:'beach',
+      text:'{{name}} stood firm as a disheveled person emerged from the jungle. "You fired the flare," the stranger said. "I`ve been here three years. This island... it doesn`t let people leave easily."',
+      choices:[
+        {text:'Ask about escape',next:'learn_truth'},
+        {text:'Demand explanation',next:'island_secret'}
+      ]
+    },
+    journal_discovery:{
+      id:'journal_discovery',
+      title:'Revealing Truth',
+      scene:'forest',
+      text:'{{name}} read the journal. A scientist had studied this island before disappearing. The notes described magnetic anomalies affecting navigation, explaining why boats crashed here. But there was a map to a radio tower!',
+      choices:[
+        {text:'Find the tower',next:'tower_search'},
+        {text:'Investigate anomalies',next:'anomaly_study'}
+      ]
+    },
+    deeper_jungle:{
+      id:'deeper_jungle',
+      title:'The Heart of Mystery',
+      scene:'forest',
+      text:'{{name}} pushed deeper into the jungle. The tracks led to a sophisticated laboratory hidden in a cave, still operational. Someone was conducting secret research here.',
+      choices:[
+        {text:'Enter lab',next:'lab_discovery'},
+        {text:'Look for inhabitants',next:'search_lab'}
+      ]
+    },
+    night_investigation:{
+      id:'night_investigation',
+      title:'Bioluminescent Wonders',
+      scene:'forest',
+      text:'{{name}} followed the lights and discovered they came from bioluminescent plants and insects. The jungle was alive with natural glow. In the center was a clearing with communication equipment!',
+      choices:[
+        {text:'Use the equipment',next:'radio_contact'},
+        {text:'Examine setup',next:'equipment_study'}
+      ]
+    },
+    camp_night:{
+      id:'camp_night',
+      title:'A Restless Night',
+      scene:'beach',
+      text:'{{name}} stayed at camp, keeping a fire burning. In the morning, {{he}} found fresh supplies left near {{his}} camp - food, water, and a note: "Meet me at the volcano at sunset."',
+      choices:[
+        {text:'Go to meeting',next:'volcano_meeting'},
+        {text:'Ignore the note',next:'suspicious_ignore'}
+      ]
+    },
+    cave_depths:{
+      id:'cave_depths',
+      title:'Ancient Chamber',
+      scene:'cave',
+      text:'{{name}} ventured deep into the cave and found a chamber with modern equipment alongside ancient artifacts. Someone was studying the island`s history. There was also a working satellite phone!',
+      choices:[
+        {text:'Use the phone',next:'make_call'},
+        {text:'Investigate equipment',next:'study_setup'}
+      ]
+    },
+    make_call:{
+      id:'make_call',
+      title:'Connection to the Outside',
+      scene:'cave',
+      text:'{{name}} called for help using the satellite phone. Rescue was coming! But before leaving, {{he}} understood the island`s secret - it was a natural refuge that protected endangered species, which is why it was kept off maps.',
+      choices:[]
+    },
+    radio_contact:{
+      id:'radio_contact',
+      title:'Signal Sent',
+      scene:'forest',
+      text:'{{name}} activated the radio and sent out a distress call. Within hours, a rescue helicopter arrived. As {{he}} flew away, {{name}} looked back at the mysterious island, grateful to have survived but knowing its secrets would stay with {{him}} forever.',
+      choices:[]
+    },
+    tower_search:{
+      id:'tower_search',
+      title:'The Communication Tower',
+      scene:'sunset',
+      text:'{{name}} found the radio tower hidden on a cliff. {{He}} climbed up and activated it. As the sun set, {{he}} sent out a distress signal. Soon, {{he}} heard the beautiful sound of a rescue helicopter approaching.',
+      choices:[]
+    },
+    lab_discovery:{
+      id:'lab_discovery',
+      title:'Scientific Truth',
+      scene:'cave',
+      text:'{{name}} entered the lab and found detailed research about the island. It was a protected zone for studying evolution in isolation. The scientist left detailed instructions for contacting rescue, which {{name}} followed.',
+      choices:[]
+    }
+  },
+  startPage:'start'
+};
