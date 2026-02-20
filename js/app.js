@@ -1,8 +1,7 @@
 /* ═════════════════════════════════════════════════
    GLOBALS & CONFIG
 ═════════════════════════════════════════════════ */
-const BGS={village:'assets/bg_village.jpg',forest:'assets/bg_forest.jpg',snow:'assets/bg_snow.jpg',cherry:'assets/bg_cherry.jpg',volcano:'assets/bg_volcano.jpg',beach:'assets/bg_beach.jpg',sunset:'assets/bg_sunset.jpg',cave:'assets/bg_cave.jpg'};
-const TRAINERS=['assets/trainer1.png','assets/trainer2.png','assets/trainer3.png'];
+const BGS={village:'assets/bg_village.jpg',village_park:'assets/bg_village_park.jpg',forest:'assets/bg_forest.jpg',forest_stream:'assets/bg_forest_stream.jpg',forest_clearing:'assets/bg_forest_clearing.jpg',forest_deep:'assets/bg_forest_deep.jpg',mountain_valley:'assets/bg_mountain_valley.jpg',mountain_ridge:'assets/bg_mountain_ridge.jpg',mountain_peak:'assets/bg_mountain_peak.jpg',house_entry:'assets/bg_house_entry.jpg',house_living:'assets/bg_house_living.jpg',snow:'assets/bg_snow.jpg',cherry:'assets/bg_cherry.jpg',volcano:'assets/bg_volcano.jpg',beach:'assets/bg_beach.jpg',sunset:'assets/bg_sunset.jpg',cave:'assets/bg_cave.jpg'};
 const POKES=[
   {n:'Pikachu',e:'⚡',id:25},{n:'Charmander',e:'🔥',id:4},{n:'Bulbasaur',e:'🌿',id:1},
   {n:'Squirtle',e:'💧',id:7},{n:'Eevee',e:'🍂',id:133},{n:'Gengar',e:'👻',id:94},
@@ -321,7 +320,7 @@ function validateStory(json){
     }
   }
   
-  const validScenes=['village','forest','snow','cherry','volcano','beach','sunset','cave'];
+  const validScenes=['village','village_park','forest','forest_stream','forest_clearing','forest_deep','mountain_valley','mountain_ridge','mountain_peak','house_entry','house_living','snow','cherry','volcano','beach','sunset','cave'];
   Object.values(json.pages||{}).forEach(page=>{
     if(!validScenes.includes(page.scene)){
       warnings.push(`Invalid scene '${page.scene}' in page '${page.id}'`);
@@ -409,7 +408,6 @@ function loadStoryAndStart(){
     pageHistory=[currentPageId];
     
     loadCry(U.pokeId);
-    document.getElementById('tr-spr').src=TRAINERS[Math.floor(Math.random()*TRAINERS.length)];
     document.getElementById('pk-spr').src=spriteUrl(U.pokeId);
     
     show('s-book');
@@ -438,8 +436,13 @@ function renderPage(pageId){
   document.getElementById('end-menu-btn').textContent=t('endMenuBtn');
   const sh=document.getElementById('swipe-hint');if(sh)sh.textContent=t('swipeHint');
   
-  document.getElementById('bg-img').src=BGS[page.scene]||BGS.village;
-  startParticles(page.scene);
+  // Load background - use exact scene name or fallback to village
+  const bgSrc=BGS[page.scene]||BGS.village;
+  document.getElementById('bg-img').src=bgSrc;
+  
+  // Use base scene name for particles (e.g., 'forest_stream' → 'forest')
+  const sceneBase=page.scene.split('_')[0];
+  startParticles(sceneBase);
   
   const choiceContainer=document.getElementById('choice-container');
   choiceContainer.innerHTML='';
@@ -458,8 +461,15 @@ function renderPage(pageId){
   }
   
   if(isEndingPage){
-    // Smooth ending sequence instead of immediate overlay
-    setTimeout(()=>showOakEnding(),1500);
+    // Show "The End" button instead of auto-fade
+    const choiceDiv=document.createElement('div');
+    choiceDiv.className='choice-buttons';
+    const endBtn=document.createElement('button');
+    endBtn.className='choice-btn end-btn';
+    endBtn.textContent='📖 THE END';
+    endBtn.onclick=()=>showOakEnding();
+    choiceDiv.appendChild(endBtn);
+    choiceContainer.appendChild(choiceDiv);
   }else{
     const choiceDiv=document.createElement('div');
     choiceDiv.className='choice-buttons';
@@ -688,7 +698,7 @@ DEPTH REQUIREMENTS:
 
 REQUIRED SCENES:
   - Must use these scenes: ${scenes.join(', ')}
-  - Available: village, forest, snow, cherry, volcano, beach, sunset, cave
+  - Available: village, village_park, forest, forest_stream, forest_clearing, forest_deep, mountain_valley, mountain_ridge, mountain_peak, house_entry, house_living, snow, cherry, volcano, beach, sunset, cave
 
 STORY MOOD: ${mood}
 
@@ -767,7 +777,7 @@ Before returning, verify:
 ✓ At least one page has empty "choices" array (ending)
 ✓ ALL text uses template variables: {{name}}, {{pokemon}}, {{he}}, {{she}}, {{his}}, {{her}}
 ✓ Reading level is STRICTLY followed (sentence length, vocabulary)
-✓ Scene names are EXACT: village, forest, snow, cherry, volcano, beach, sunset, cave
+✓ Scene names are EXACT: village, village_park, forest, forest_stream, forest_clearing, forest_deep, mountain_valley, mountain_ridge, mountain_peak, house_entry, house_living, snow, cherry, volcano, beach, sunset, cave
 ✓ Story has clear beginning, middle, and satisfying ending(s)
 ✓ Total page count matches ${numPages}
 ✓ Language is consistent (${langGen==='is'?'all Icelandic':'all English'})
@@ -807,6 +817,8 @@ function copyPrompt(){
     toast('⚠️ Copy failed. Select and copy manually.');
   });
 }
+
+
 
 /* ═════════════════════════════════════════════════
    STORY MANAGEMENT
