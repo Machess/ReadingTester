@@ -127,6 +127,8 @@
         <label class="checkbox-label"><input type="checkbox" value="beach"> 🏖️ Beach</label>
         <label class="checkbox-label"><input type="checkbox" value="sunset" checked> 🌅 Sunset</label>
         <label class="checkbox-label"><input type="checkbox" value="cave"> 🕳️ Cave</label>
+        <label class="checkbox-label"><input type="checkbox" value="lab_table"> 🧪 Lab Table</label>
+        <label class="checkbox-label"><input type="checkbox" value="lab_hallway"> 🔬 Lab Hallway</label>
       </div>
     </div>
 
@@ -265,6 +267,25 @@
   <div class="gb2"></div>
   <div class="gen-ttl" id="gen-ttl">LOADING YOUR<br>STORY...</div>
   <div class="gen-st" id="gen-st">Selecting best adventure...</div>
+</div>
+
+<!-- STORY INTRO -->
+<div class="screen off" id="s-intro">
+  <div class="intro-container">
+    <div class="intro-content">
+      <div class="story-badge">📖 YOUR ADVENTURE</div>
+      <h1 class="story-title" id="intro-title">The Magic Forest</h1>
+      <div class="story-meta">
+        <span class="story-mood" id="intro-mood">🌟 Cheerful</span>
+        <span class="story-pages" id="intro-pages">12 Pages</span>
+      </div>
+      <button class="begin-btn" id="begin-btn" onclick="beginReading()">
+        <span class="begin-icon">📚</span>
+        <span class="begin-text">BEGIN READING</span>
+      </button>
+    </div>
+    <div class="intro-sparkles"></div>
+  </div>
 </div>
 
 <!-- BOOK READER -->
@@ -407,6 +428,7 @@
 <div class="toast" id="toast"></div>
 <div class="fade-overlay" id="fade-overlay"></div>
 
+<script src="js/story-blueprints.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

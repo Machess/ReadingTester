@@ -1,7 +1,7 @@
 /* ═════════════════════════════════════════════════
    GLOBALS & CONFIG
 ═════════════════════════════════════════════════ */
-const BGS={village:'assets/bg_village.jpg',village_park:'assets/bg_village_park.jpg',forest:'assets/bg_forest.jpg',forest_stream:'assets/bg_forest_stream.jpg',forest_clearing:'assets/bg_forest_clearing.jpg',forest_deep:'assets/bg_forest_deep.jpg',mountain_valley:'assets/bg_mountain_valley.jpg',mountain_ridge:'assets/bg_mountain_ridge.jpg',mountain_peak:'assets/bg_mountain_peak.jpg',house_entry:'assets/bg_house_entry.jpg',house_living:'assets/bg_house_living.jpg',snow:'assets/bg_snow.jpg',cherry:'assets/bg_cherry.jpg',volcano:'assets/bg_volcano.jpg',beach:'assets/bg_beach.jpg',sunset:'assets/bg_sunset.jpg',cave:'assets/bg_cave.jpg'};
+const BGS={village:'assets/bg_village.jpg',village_park:'assets/bg_village_park.jpg',forest:'assets/bg_forest.jpg',forest_stream:'assets/bg_forest_stream.jpg',forest_clearing:'assets/bg_forest_clearing.jpg',forest_deep:'assets/bg_forest_deep.jpg',mountain_valley:'assets/bg_mountain_valley.jpg',mountain_ridge:'assets/bg_mountain_ridge.jpg',mountain_peak:'assets/bg_mountain_peak.jpg',house_entry:'assets/bg_house_entry.jpg',house_living:'assets/bg_house_living.jpg',snow:'assets/bg_snow.jpg',cherry:'assets/bg_cherry.jpg',volcano:'assets/bg_volcano.jpg',beach:'assets/bg_beach.jpg',sunset:'assets/bg_sunset.jpg',cave:'assets/bg_cave.jpg',lab_table:'assets/bg_lab_table.jpg',lab_hallway:'assets/bg_lab_hallway.jpg'};
 
 const ITEMS={
   oran_berry:{name:'Oran Berry',emoji:'🫐',description:'A sweet blue berry that restores energy. Most Pokémon love its taste!'},
@@ -690,7 +690,13 @@ function getDefaultLibrary(){
     stories:{
       default_simple_en:DEFAULT_SIMPLE_EN,
       default_medium_en:DEFAULT_MEDIUM_EN,
-      default_hard_en:DEFAULT_HARD_EN
+      default_hard_en:DEFAULT_HARD_EN,
+      // Procedural story placeholders (will generate on selection)
+      proc_lost_companion:{meta:{id:'proc_lost_companion',isProcedural:true,blueprintId:'lost_companion',ageRange:{min:5,max:8,tier:'simple'},genderSupport:{boy:true,girl:true},language:'en'}},
+      proc_mystery:{meta:{id:'proc_mystery',isProcedural:true,blueprintId:'mysterious_discovery',ageRange:{min:7,max:10,tier:'medium'},genderSupport:{boy:true,girl:true},language:'en'}},
+      proc_challenge:{meta:{id:'proc_challenge',isProcedural:true,blueprintId:'big_challenge',ageRange:{min:6,max:9,tier:'medium'},genderSupport:{boy:true,girl:true},language:'en'}},
+      proc_nature:{meta:{id:'proc_nature',isProcedural:true,blueprintId:'nature_explorer',ageRange:{min:5,max:7,tier:'simple'},genderSupport:{boy:true,girl:true},language:'en'}},
+      proc_helping:{meta:{id:'proc_helping',isProcedural:true,blueprintId:'helping_hand',ageRange:{min:6,max:9,tier:'medium'},genderSupport:{boy:true,girl:true},language:'en'}}
     },
     settings:{playCount:{}}
   };
@@ -735,6 +741,17 @@ function selectBestStory(userData){
   
   const selected=candidates[Math.floor(Math.random()*candidates.length)];
   
+  // If selected story is procedural, generate it now!
+  if(selected.meta.isProcedural){
+    console.log('Generating procedural story:', selected.meta.blueprintId);
+    const generatedStory=generateProceduralStory(selected.meta.blueprintId);
+    if(generatedStory){
+      lib.settings.playCount[selected.meta.id]=(lib.settings.playCount[selected.meta.id]||0)+1;
+      saveLibrary(lib);
+      return generatedStory;
+    }
+  }
+  
   lib.settings.playCount[selected.meta.id]=(lib.settings.playCount[selected.meta.id]||0)+1;
   saveLibrary(lib);
   
@@ -769,7 +786,7 @@ function validateStory(json){
   const hasEnding=Object.values(json.pages||{}).some(p=>!p.choices||p.choices.length===0);
   if(!hasEnding)errors.push("Story must have at least one ending");
   
-  // Check minimum story depth (5 pages to any ending)
+  // Check minimum story depth (5 pages to any ending) - REQUIRED
   if(json.pages&&json.startPage){
     const checkDepth=(pageId,visited=new Set(),depth=0)=>{
       if(visited.has(pageId))return Infinity;
@@ -789,16 +806,34 @@ function validateStory(json){
     
     const shortestPath=checkDepth(json.startPage);
     if(shortestPath<5){
-      warnings.push(`Story has path to ending in only ${shortestPath} pages. Recommended minimum: 5 pages`);
+      errors.push(`STORY TOO SHORT: Shortest path to ending is ${shortestPath} pages. REQUIRED MINIMUM: 5 pages. Story will not work properly.`);
     }
   }
   
-  const validScenes=['village','village_park','forest','forest_stream','forest_clearing','forest_deep','mountain_valley','mountain_ridge','mountain_peak','house_entry','house_living','snow','cherry','volcano','beach','sunset','cave'];
+  const validScenes=['village','village_park','forest','forest_stream','forest_clearing','forest_deep','mountain_valley','mountain_ridge','mountain_peak','house_entry','house_living','snow','cherry','volcano','beach','sunset','cave','lab_table','lab_hallway'];
   Object.values(json.pages||{}).forEach(page=>{
     if(!validScenes.includes(page.scene)){
       warnings.push(`Invalid scene '${page.scene}' in page '${page.id}'`);
     }
   });
+  
+  // Validate educational mechanics
+  if(!json.meta.collectibleItem){
+    errors.push("Missing required 'collectibleItem' in meta - every story must give player one item");
+  }
+  
+  const validItems=['oran_berry','pecha_berry','pokesnack','honey_jar','fresh_water','moomoo_milk','rainbow_herb','stardust','charcoal','silver_leaf'];
+  if(json.meta.collectibleItem&&!validItems.includes(json.meta.collectibleItem)){
+    errors.push(`Invalid collectibleItem '${json.meta.collectibleItem}'. Must be one of: ${validItems.join(', ')}`);
+  }
+  
+  if(json.meta.collectibleItem&&!json.meta.itemPage){
+    errors.push("Missing 'itemPage' in meta - must specify which page the item is found on");
+  }
+  
+  if(json.meta.itemPage&&!json.pages[json.meta.itemPage]){
+    errors.push(`itemPage '${json.meta.itemPage}' does not exist in pages`);
+  }
   
   return{valid:errors.length===0,errors,warnings};
 }
@@ -863,6 +898,10 @@ function loadStoryAndStart(){
   
   setTimeout(()=>{
     currentStory=selectBestStory(U);
+    
+    // Enrich story with random Pokemon and auto-generated vocabulary
+    enrichStoryWithGameMechanics(currentStory);
+    
     currentPageId=currentStory.startPage;
     pageHistory=[currentPageId];
     
@@ -872,9 +911,202 @@ function loadStoryAndStart(){
     // Hide pokemon sprite initially - will show if story has one
     document.getElementById('pk-spr').style.display='none';
     
-    show('s-book');
-    renderPage(currentPageId);
+    // Show story intro screen
+    showStoryIntro();
   },1500);
+}
+
+function showStoryIntro(){
+  // Populate intro screen
+  document.getElementById('intro-title').textContent=currentStory.meta.title||'Your Adventure';
+  
+  const moodEmojis={
+    cheerful:'🌟',exciting:'⚡',suspenseful:'🔍',mysterious:'🌙',
+    adventurous:'🗺️',magical:'✨',scary:'👻',funny:'😄'
+  };
+  const moodEmoji=moodEmojis[currentStory.meta.mood]||'📖';
+  const moodText=currentStory.meta.mood?currentStory.meta.mood.charAt(0).toUpperCase()+currentStory.meta.mood.slice(1):'Adventure';
+  document.getElementById('intro-mood').textContent=`${moodEmoji} ${moodText}`;
+  
+  document.getElementById('intro-pages').textContent=`${Object.keys(currentStory.pages).length} Pages`;
+  
+  // Show intro with fade in
+  show('s-intro');
+  setTimeout(()=>{
+    document.getElementById('s-intro').classList.add('fade-in');
+  },100);
+}
+
+function beginReading(){
+  const intro=document.getElementById('s-intro');
+  const book=document.getElementById('s-book');
+  
+  // Fade out intro
+  intro.classList.add('fade-out');
+  
+  setTimeout(()=>{
+    intro.classList.remove('show','fade-in','fade-out');
+    
+    // Show book with opening animation
+    book.classList.remove('off');
+    book.classList.add('show','book-opening');
+    
+    // Render first page after book opens
+    setTimeout(()=>{
+      renderPage(currentPageId);
+      book.classList.remove('book-opening');
+    },1000);
+  },500);
+}
+
+/* ═════════════════════════════════════════════════
+   STORY ENRICHMENT - ADD RANDOM POKEMON & VOCABULARY
+═════════════════════════════════════════════════ */
+function enrichStoryWithGameMechanics(story){
+  // ALWAYS add Pokemon if not already specified (100% of stories)
+  if(!story.meta.hasPokemon){
+    story.meta.hasPokemon=true;
+    
+    // Random Pokemon from 1-151 (Kanto)
+    story.meta.pokemonId=Math.floor(Math.random()*151)+1;
+    
+    // Pick a mid-story page for Pokemon (avoid first and last 2 pages)
+    const pages=Object.keys(story.pages);
+    const midPages=pages.filter(p=>{
+      const page=story.pages[p];
+      // Must have choices (not ending) and not be start page
+      return p!==story.startPage&&page.choices&&page.choices.length>0;
+    });
+    
+    if(midPages.length>0){
+      // Pick a random mid-story page (not too early)
+      const startIndex=Math.min(2,Math.floor(midPages.length/3));
+      const eligiblePages=midPages.slice(startIndex);
+      const randomIndex=Math.floor(Math.random()*Math.min(eligiblePages.length,5));
+      story.meta.pokemonPage=eligiblePages[randomIndex]||midPages[0];
+    }else{
+      // Fallback: use any non-ending page
+      const nonEndingPages=pages.filter(p=>{
+        const page=story.pages[p];
+        return page.choices&&page.choices.length>0;
+      });
+      if(nonEndingPages.length>0){
+        story.meta.pokemonPage=nonEndingPages[0];
+      }
+    }
+  }
+  
+  // ALWAYS add item if missing (REQUIRED)
+  if(!story.meta.collectibleItem){
+    // Random item from the 10 available
+    const items=['oran_berry','pecha_berry','pokesnack','honey_jar','fresh_water','moomoo_milk','rainbow_herb','stardust','charcoal','silver_leaf'];
+    story.meta.collectibleItem=items[Math.floor(Math.random()*items.length)];
+    
+    // Pick a different page than Pokemon (if possible)
+    const pages=Object.keys(story.pages);
+    const availablePages=pages.filter(p=>{
+      const page=story.pages[p];
+      return p!==story.startPage&&p!==story.meta.pokemonPage&&page.choices&&page.choices.length>0;
+    });
+    
+    if(availablePages.length>0){
+      story.meta.itemPage=availablePages[Math.floor(Math.random()*Math.min(availablePages.length,5))];
+    }else{
+      // Fallback: use any mid-story page
+      const midPages=pages.filter(p=>{
+        const page=story.pages[p];
+        return p!==story.startPage&&page.choices&&page.choices.length>0;
+      });
+      if(midPages.length>0){
+        story.meta.itemPage=midPages[Math.floor(Math.random()*midPages.length)];
+      }
+    }
+  }
+  
+  // Auto-generate vocabulary word if not specified
+  if(!story.meta.vocabularyWord){
+    generateVocabularyForStory(story);
+  }
+  
+  // Debug logging
+  console.log('Story enriched:', {
+    hasPokemon: story.meta.hasPokemon,
+    pokemonId: story.meta.pokemonId,
+    pokemonPage: story.meta.pokemonPage,
+    collectibleItem: story.meta.collectibleItem,
+    itemPage: story.meta.itemPage,
+    vocabularyWord: story.meta.vocabularyWord
+  });
+}
+
+function generateVocabularyForStory(story){
+  const age=parseInt(U.age)||8;
+  const primaryScene=story.meta.scenesUsed?story.meta.scenesUsed[0]:'village';
+  
+  // Vocabulary words by age level (age + 3 grades)
+  const vocabByAge={
+    '5-6':[
+      {word:'journey',def:'A trip from one place to another',wrong:['A big house','A type of food']},
+      {word:'discover',def:'To find something new',wrong:['To lose something','To eat quickly']},
+      {word:'sparkle',def:'To shine with small flashes of light',wrong:['To make noise','To feel cold']},
+      {word:'adventure',def:'An exciting experience',wrong:['A boring day','A small bug']}
+    ],
+    '7-8':[
+      {word:'magnificent',def:'Very large and impressive',wrong:['Very scary','Very old']},
+      {word:'investigate',def:'To examine something carefully',wrong:['To run away','To make food']},
+      {word:'peculiar',def:'Strange or unusual',wrong:['Very common','Very happy']},
+      {word:'mysterious',def:'Difficult to understand or explain',wrong:['Very bright','Very loud']}
+    ],
+    '9-10':[
+      {word:'tremendous',def:'Very large or powerful',wrong:['Very tiny','Very quiet']},
+      {word:'elaborate',def:'Detailed and complicated',wrong:['Simple and plain','Fast and quick']},
+      {word:'mystical',def:'Having spiritual or magical qualities',wrong:['Very scientific','Very ordinary']},
+      {word:'phenomenon',def:'A fact or event that is observed',wrong:['A type of building','A small insect']}
+    ],
+    '11-12':[
+      {word:'formidable',def:'Inspiring fear or respect through strength',wrong:['Weak and harmless','Happy and cheerful']},
+      {word:'expedition',def:'A journey for a specific purpose',wrong:['A small snack','A quick nap']},
+      {word:'resilient',def:'Able to recover quickly from difficulties',wrong:['Unable to move','Always sleeping']},
+      {word:'compassionate',def:'Feeling or showing sympathy',wrong:['Feeling angry','Feeling bored']}
+    ],
+    '13+':[
+      {word:'harmonious',def:'Free from disagreement or conflict',wrong:['Full of arguments','Very confusing']},
+      {word:'profound',def:'Very great or intense',wrong:['Shallow and simple','Quick and brief']},
+      {word:'contemplation',def:'Deep reflective thought',wrong:['Quick decision','Loud noise']},
+      {word:'extraordinary',def:'Very unusual or remarkable',wrong:['Very ordinary','Very boring']}
+    ]
+  };
+  
+  // Determine age group
+  let ageGroup='7-8';
+  if(age<=6)ageGroup='5-6';
+  else if(age<=8)ageGroup='7-8';
+  else if(age<=10)ageGroup='9-10';
+  else if(age<=12)ageGroup='11-12';
+  else ageGroup='13+';
+  
+  // Pick random word from age group
+  const words=vocabByAge[ageGroup];
+  const vocab=words[Math.floor(Math.random()*words.length)];
+  
+  // Add to story meta
+  story.meta.vocabularyWord=vocab.word;
+  story.meta.vocabularyDefinition=vocab.def;
+  story.meta.vocabularyWrongAnswers=vocab.wrong;
+  
+  // Generate context sentence based on scene
+  const contextTemplates={
+    village:`The ${vocab.word} village was full of friendly people`,
+    forest:`The ${vocab.word} forest stretched as far as {{name}} could see`,
+    mountain_valley:`The ${vocab.word} valley took {{his}} breath away`,
+    beach:`The ${vocab.word} ocean waves crashed on the shore`,
+    cave:`Inside the ${vocab.word} cave, {{name}} felt amazed`,
+    volcano:`The ${vocab.word} volcano towered above everything`,
+    snow:`The ${vocab.word} snowfall covered the ground`
+  };
+  
+  const sceneBase=primaryScene.split('_')[0];
+  story.meta.vocabularyContext=contextTemplates[sceneBase]||`The ${vocab.word} sight amazed {{name}}`;
 }
 
 function renderPage(pageId){
@@ -1095,6 +1327,11 @@ function startParticles(scene){
     for(let i=0;i<20;i++)pts.push({x:Math.random()*W,y:.78*H+Math.random()*.15*H,r:1.5+Math.random()*3,vx:(Math.random()-.5)*.4,life:Math.random()});
     function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.globalAlpha=Math.sin(p.life*Math.PI)*.45;ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.stroke();p.x+=p.vx;p.life+=.007;if(p.life>1){p.life=0;p.x=Math.random()*W;}});ctx.globalAlpha=1;animId=requestAnimationFrame(draw);}draw();
   }
+  // Lab - scientific bubbles/steam
+  else if(scene==='lab'){
+    for(let i=0;i<25;i++)pts.push({x:Math.random()*W,y:H+Math.random()*20,r:1+Math.random()*3,vy:-(0.3+Math.random()*.6),vx:(Math.random()-.5)*.2,life:Math.random(),col:['rgba(100,255,200,.6)','rgba(150,200,255,.6)','rgba(255,200,150,.6)'][Math.floor(Math.random()*3)]});
+    function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.globalAlpha=Math.sin(p.life*Math.PI)*.4;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.vy;p.x+=p.vx;p.life+=.003;if(p.life>1||p.y<-10){p.life=0;p.y=H+10;p.x=Math.random()*W;}});ctx.globalAlpha=1;animId=requestAnimationFrame(draw);}draw();
+  }
   // Default village - sparkles
   else{
     for(let i=0;i<15;i++)pts.push({x:Math.random()*W,y:Math.random()*H*.8,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.3,r:1.5+Math.random()*2,life:Math.random()});
@@ -1199,11 +1436,48 @@ DEPTH REQUIREMENTS:
 
 REQUIRED SCENES:
   - Must use these scenes: ${scenes.join(', ')}
-  - Available: village, village_park, forest, forest_stream, forest_clearing, forest_deep, mountain_valley, mountain_ridge, mountain_peak, house_entry, house_living, snow, cherry, volcano, beach, sunset, cave
+  - Available: village, village_park, forest, forest_stream, forest_clearing, forest_deep, mountain_valley, mountain_ridge, mountain_peak, house_entry, house_living, snow, cherry, volcano, beach, sunset, cave, lab_table, lab_hallway
 
 STORY MOOD: ${mood}
 
 ${additional?`ADDITIONAL INSTRUCTIONS: ${additional}`:''}
+
+═══════════════════════════════════════════════════════════
+🎮 EDUCATIONAL GAME MECHANICS (AUTO-GENERATED)
+═══════════════════════════════════════════════════════════
+
+IMPORTANT: The app automatically adds these mechanics - DO NOT include them in your JSON:
+
+❌ DO NOT INCLUDE:
+   - hasPokemon, pokemonId, pokemonPage (app adds automatically to EVERY story)
+   - vocabularyWord, vocabularyContext, vocabularyDefinition, vocabularyWrongAnswers (app generates based on age + biome)
+
+✅ YOU MUST INCLUDE:
+   - collectibleItem: ONE item the player finds (REQUIRED)
+   - itemPage: The page ID where the item is found (REQUIRED)
+
+ITEM COLLECTION (REQUIRED):
+   - Player finds ONE collectible item during the story
+   - Item found on ONE specific page (mid-story, pages 3-6 recommended)
+   - This item can be used to befriend Pokemon
+   
+   Available items:
+   - oran_berry, pecha_berry, pokesnack, honey_jar, fresh_water,
+     moomoo_milk, rainbow_herb, stardust, charcoal, silver_leaf
+   
+   In meta, specify:
+   - "collectibleItem": "oran_berry" (choose one that fits your story theme)
+   - "itemPage": "page_id" (the page where item is found)
+   
+   In story text: Briefly mention finding the item naturally.
+   Example: "{{name}} spotted something shiny under a bush - a small blue berry!"
+
+POKEMON & VOCABULARY (AUTO-GENERATED BY APP):
+   - App ALWAYS adds a Pokemon encounter (100% - every story gets one!)
+   - Pokemon randomly selected from 151 Kanto Pokemon
+   - Pokemon appears on random mid-story page
+   - App auto-generates age-appropriate vocabulary words
+   - You don't need to worry about these - just focus on story quality!
 
 ═══════════════════════════════════════════════════════════
 📐 JSON STRUCTURE (CRITICAL - FOLLOW EXACTLY)
@@ -1232,7 +1506,9 @@ Return ONLY valid JSON in this exact format (no markdown, no explanation):
     "theme": "${theme}",
     "mood": "${mood}",
     "totalPages": ${numPages},
-    "scenesUsed": ["${scenes.join('","')}"]
+    "scenesUsed": ["${scenes.join('","')}"],
+    "collectibleItem": "oran_berry",
+    "itemPage": "page_id_where_item_found"
   },
   "pages": {
     "start": {
@@ -1278,11 +1554,15 @@ Before returning, verify:
 ✓ At least one page has empty "choices" array (ending)
 ✓ ALL text uses template variables: {{name}}, {{pokemon}}, {{he}}, {{she}}, {{his}}, {{her}}
 ✓ Reading level is STRICTLY followed (sentence length, vocabulary)
-✓ Scene names are EXACT: village, village_park, forest, forest_stream, forest_clearing, forest_deep, mountain_valley, mountain_ridge, mountain_peak, house_entry, house_living, snow, cherry, volcano, beach, sunset, cave
+✓ Scene names are EXACT: village, village_park, forest, forest_stream, forest_clearing, forest_deep, mountain_valley, mountain_ridge, mountain_peak, house_entry, house_living, snow, cherry, volcano, beach, sunset, cave, lab_table, lab_hallway
 ✓ Story has clear beginning, middle, and satisfying ending(s)
 ✓ Total page count matches ${numPages}
 ✓ Language is consistent (${langGen==='is'?'all Icelandic':'all English'})
 ✓ NO hardcoded names or Pokémon — ONLY template variables
+✓ Meta includes collectibleItem (valid item key)
+✓ Meta includes itemPage (valid page ID)
+✓ Item page is mid-story (pages 3-6 recommended, NOT on first or last pages)
+✓ DO NOT include hasPokemon, pokemonId, pokemonPage, vocabularyWord - app generates these
 
 ═══════════════════════════════════════════════════════════
 💡 TEMPLATE VARIABLE USAGE (CRITICAL)
@@ -1465,13 +1745,6 @@ const DEFAULT_SIMPLE_EN={
     mood:'cheerful',
     totalPages:12,
     scenesUsed:['village','forest','forest_clearing','forest_stream','sunset'],
-    vocabularyWord:'sparkle',
-    vocabularyContext:'The stones began to sparkle in the sunlight',
-    vocabularyDefinition:'To shine with small flashes of light',
-    vocabularyWrongAnswers:['To make a loud noise','To feel very cold'],
-    hasPokemon:true,
-    pokemonId:10,
-    pokemonPage:'butterfly_chase',
     collectibleItem:'oran_berry',
     itemPage:'flower_smell'
   },
@@ -1728,13 +2001,6 @@ const DEFAULT_MEDIUM_EN={
     mood:'exciting',
     totalPages:14,
     scenesUsed:['village','mountain_valley','mountain_ridge','mountain_peak','forest','sunset'],
-    vocabularyWord:'summit',
-    vocabularyContext:'They finally reached the summit of the mountain',
-    vocabularyDefinition:'The highest point of a mountain',
-    vocabularyWrongAnswers:['The bottom of a valley','A type of climbing rope'],
-    hasPokemon:true,
-    pokemonId:74,
-    pokemonPage:'ledge_climb',
     collectibleItem:'fresh_water',
     itemPage:'river_path'
   },
@@ -1961,13 +2227,6 @@ const DEFAULT_HARD_EN={
     mood:'suspenseful',
     totalPages:16,
     scenesUsed:['beach','forest','cave','volcano','sunset'],
-    vocabularyWord:'phenomenon',
-    vocabularyContext:'This strange phenomenon had never been documented before',
-    vocabularyDefinition:'A fact or event that is observed to exist or happen',
-    vocabularyWrongAnswers:['A type of ancient building','A supernatural creature'],
-    hasPokemon:true,
-    pokemonId:54,
-    pokemonPage:'stream_discovery',
     collectibleItem:'stardust',
     itemPage:'cave_entrance'
   },
